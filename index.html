@@ -518,6 +518,97 @@ textarea:focus { border-color: var(--ink); }
 .drop-item:last-child { border-bottom: none; }
 .drop-item:hover { background: var(--surface2); }
 .drop-item-meta { font-size: 0.62rem; color: var(--ink3); }
+
+/* TODO LAYOUT */
+.todo-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+@media (max-width: 650px) { .todo-layout { grid-template-columns: 1fr; } }
+
+.todo-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-radius: var(--r);
+  padding: 0.8rem 0.9rem;
+  margin-bottom: 0.5rem;
+  animation: rise 0.2s ease both;
+  transition: opacity 0.2s;
+}
+.todo-item.done-item { opacity: 0.45; }
+.todo-item.done-item .todo-title { text-decoration: line-through; color: var(--ink3); }
+.todo-item[data-priority="high"]    { border-left-color: var(--food); }
+.todo-item[data-priority="medium"]  { border-left-color: var(--habit); }
+.todo-item[data-priority="low"]     { border-left-color: var(--sport); }
+
+.todo-top { display: flex; align-items: flex-start; gap: 0.6rem; }
+.todo-check {
+  width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px;
+  border: 1.5px solid var(--border); border-radius: 3px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; transition: all 0.15s; background: var(--surface2);
+}
+.todo-item.done-item .todo-check { background: var(--sport); border-color: var(--sport); color: white; }
+.todo-title { flex: 1; font-size: 0.8rem; font-weight: 500; line-height: 1.4; cursor: pointer; }
+.todo-actions { display: flex; gap: 4px; margin-left: auto; flex-shrink: 0; }
+.todo-btn { background: none; border: none; cursor: pointer; color: var(--ink3); font-size: 0.75rem; padding: 2px 4px; transition: color 0.15s; }
+.todo-btn:hover { color: var(--accent); }
+
+.todo-meta { display: flex; gap: 0.5rem; margin-top: 0.4rem; margin-left: 1.6rem; flex-wrap: wrap; align-items: center; }
+.todo-tag { font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 6px; border-radius: 10px; background: var(--surface2); border: 1px solid var(--border); color: var(--ink3); }
+.todo-due { font-size: 0.62rem; color: var(--ink3); }
+.todo-due.overdue { color: var(--food); font-weight: 500; }
+
+.todo-subtasks { margin-top: 0.5rem; margin-left: 1.6rem; }
+.subtask-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0; font-size: 0.72rem; color: var(--ink2); }
+.subtask-check { width: 14px; height: 14px; flex-shrink: 0; border: 1.5px solid var(--border); border-radius: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; transition: all 0.15s; }
+.subtask-item.sub-done .subtask-check { background: var(--sport); border-color: var(--sport); color: white; }
+.subtask-item.sub-done span { text-decoration: line-through; color: var(--ink3); }
+.subtask-add { display: flex; gap: 0.4rem; margin-top: 0.3rem; }
+.subtask-add input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 3px; padding: 0.3rem 0.5rem; font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--ink); outline: none; }
+.subtask-add button { background: var(--ink); color: var(--bg); border: none; border-radius: 3px; padding: 0.3rem 0.6rem; font-family: 'DM Mono', monospace; font-size: 0.65rem; cursor: pointer; }
+
+.priority-badge { font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 6px; border-radius: 10px; font-weight: 700; }
+.priority-badge.high   { background: rgba(232,98,58,0.12);  color: var(--food); }
+.priority-badge.medium { background: rgba(232,184,58,0.12); color: #b8860b; }
+.priority-badge.low    { background: rgba(58,191,114,0.12); color: #1e8a4c; }
+
+.todo-section-title {
+  font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink3); margin: 1rem 0 0.5rem; display: flex; align-items: center; gap: 0.5rem;
+}
+.todo-section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.filter-bar { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.filter-btn { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 3px 10px; cursor: pointer; transition: all 0.15s; color: var(--ink2); }
+.filter-btn.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+.todo-stats { display: flex; gap: 1.2rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+.todo-stat { text-align: center; }
+.todo-stat .num { font-family: 'DM Serif Display', serif; font-size: 1.6rem; line-height: 1; }
+.todo-stat .lbl { font-size: 0.6rem; color: var(--ink3); letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* WELLNESS PAGE */
+.wellness-section-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  font-weight: 500;
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.wellness-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.wellness-divider {
+  border: none;
+  border-top: 2px dashed var(--border);
+  margin: 1.8rem 0;
+}
 </style>
 </head>
 <body>
@@ -539,11 +630,10 @@ textarea:focus { border-color: var(--ink); }
     <button class="tab active" onclick="switchTab('dashboard')">Dashboard</button>
     <button class="tab" onclick="switchTab('food')">🍽 Food</button>
     <button class="tab" onclick="switchTab('expenses')">💸 Expenses</button>
-    <button class="tab" onclick="switchTab('sport')">🏃 Exercise</button>
-    <button class="tab" onclick="switchTab('sleep')">🌙 Sleep</button>
-    <button class="tab" onclick="switchTab('habits')">✓ Habits</button>
+    <button class="tab" onclick="switchTab('wellness')">🏃 Wellness</button>
     <button class="tab" onclick="switchTab('notes')">📝 Notes</button>
     <button class="tab" onclick="switchTab('weekly')">📊 Weekly</button>
+    <button class="tab" onclick="switchTab('todo')">☑ To-Do</button>
   </div>
 
   <!-- DASHBOARD -->
@@ -674,9 +764,12 @@ textarea:focus { border-color: var(--ink); }
     </div>
   </div>
 
-  <!-- SPORT -->
-  <div class="panel" id="panel-sport">
-    <div class="section-layout">
+  <!-- WELLNESS (Exercise + Sleep + Habits combined) -->
+  <div class="panel" id="panel-wellness">
+
+    <!-- Section label -->
+    <div class="wellness-section-label">🏃 Exercise</div>
+    <div class="section-layout" style="margin-bottom:1.5rem">
       <div class="section-box">
         <h3><span class="dot" style="background:var(--sport)"></span>Log Exercise</h3>
         <div class="form-row">
@@ -707,11 +800,12 @@ textarea:focus { border-color: var(--ink); }
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- SLEEP -->
-  <div class="panel" id="panel-sleep">
-    <div class="section-layout">
+    <div class="wellness-divider"></div>
+
+    <!-- Section label -->
+    <div class="wellness-section-label">🌙 Sleep</div>
+    <div class="section-layout" style="margin-bottom:1.5rem">
       <div class="section-box">
         <h3><span class="dot" style="background:var(--sleep)"></span>Log Sleep</h3>
         <div class="form-row">
@@ -724,7 +818,6 @@ textarea:focus { border-color: var(--ink); }
           <div class="range-labels"><span>Poor</span><span>Excellent</span></div>
         </div>
         <button class="btn-add" onclick="saveSleep()">Save Sleep</button>
-
         <div style="margin-top:1.2rem" id="sleep-display">
           <div class="empty-state">No sleep logged for today</div>
         </div>
@@ -738,10 +831,11 @@ textarea:focus { border-color: var(--ink); }
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- HABITS -->
-  <div class="panel" id="panel-habits">
+    <div class="wellness-divider"></div>
+
+    <!-- Section label -->
+    <div class="wellness-section-label">✓ Habits</div>
     <div class="section-layout">
       <div class="section-box">
         <h3><span class="dot" style="background:var(--habit)"></span>Today's Habits</h3>
@@ -759,6 +853,7 @@ textarea:focus { border-color: var(--ink); }
         </div>
       </div>
     </div>
+
   </div>
 
   <!-- NOTES -->
@@ -794,6 +889,78 @@ textarea:focus { border-color: var(--ink); }
       </div>
     </div>
   </div>
+
+  <!-- TO-DO -->
+  <div class="panel" id="panel-todo">
+    <div class="todo-layout">
+
+      <!-- LEFT: Add task + daily tasks -->
+      <div class="section-box">
+        <h3><span class="dot" style="background:var(--habit)"></span>Add Task</h3>
+
+        <div class="form-row">
+          <input type="text" id="todo-title" placeholder="What needs to be done?" />
+        </div>
+        <div class="form-row">
+          <select id="todo-priority">
+            <option value="high">🔴 High</option>
+            <option value="medium" selected>🟡 Medium</option>
+            <option value="low">🟢 Low</option>
+          </select>
+          <select id="todo-type">
+            <option value="daily">📅 Daily task</option>
+            <option value="backlog">📌 Backlog</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <input type="text" id="todo-category" placeholder="Category / tag (e.g. Work, Health)" />
+          <input type="date" id="todo-due" />
+        </div>
+        <button class="btn-add" onclick="addTodo()" style="width:100%;justify-content:center;display:flex">+ Add Task</button>
+
+        <div class="todo-section-title" style="margin-top:1.4rem">Today's Tasks</div>
+        <div class="filter-bar" id="filter-bar-daily">
+          <button class="filter-btn active" onclick="setFilter('daily','all',this)">All</button>
+          <button class="filter-btn" onclick="setFilter('daily','high',this)">🔴 High</button>
+          <button class="filter-btn" onclick="setFilter('daily','medium',this)">🟡 Medium</button>
+          <button class="filter-btn" onclick="setFilter('daily','low',this)">🟢 Low</button>
+        </div>
+        <div id="todo-daily-list"></div>
+      </div>
+
+      <!-- RIGHT: Stats + Backlog -->
+      <div>
+        <!-- Stats -->
+        <div class="section-box" style="margin-bottom:1.2rem">
+          <h3>Progress</h3>
+          <div class="todo-stats">
+            <div class="todo-stat"><div class="num" id="stat-today-done">0</div><div class="lbl">Done today</div></div>
+            <div class="todo-stat"><div class="num" id="stat-today-total">0</div><div class="lbl">Total today</div></div>
+            <div class="todo-stat"><div class="num" id="stat-backlog">0</div><div class="lbl">In backlog</div></div>
+            <div class="todo-stat"><div class="num" id="stat-overdue">0</div><div class="lbl">Overdue</div></div>
+          </div>
+          <div style="background:var(--surface2);border-radius:20px;height:8px;overflow:hidden;margin-top:0.3rem">
+            <div id="todo-progress-bar" style="height:100%;background:var(--sport);border-radius:20px;transition:width 0.4s;width:0%"></div>
+          </div>
+          <div id="todo-progress-label" style="font-size:0.62rem;color:var(--ink3);margin-top:0.4rem">0% complete</div>
+        </div>
+
+        <!-- Backlog -->
+        <div class="section-box">
+          <h3>📌 Backlog</h3>
+          <div class="filter-bar" id="filter-bar-backlog">
+            <button class="filter-btn active" onclick="setFilter('backlog','all',this)">All</button>
+            <button class="filter-btn" onclick="setFilter('backlog','high',this)">🔴 High</button>
+            <button class="filter-btn" onclick="setFilter('backlog','medium',this)">🟡 Medium</button>
+            <button class="filter-btn" onclick="setFilter('backlog','low',this)">🟢 Low</button>
+          </div>
+          <div id="todo-backlog-list"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 
 </div>
 
@@ -886,6 +1053,7 @@ function deleteFoodFromLibrary(id) {
   const lib = getFoodLibrary().filter(f => f.id !== id);
   saveFoodLibrary(lib);
   renderLibrary();
+  renderTodos();
 }
 
 function fillFromLibrary(item) {
@@ -1392,6 +1560,186 @@ function renderWeekly() {
 }
 
 // ─── RENDER ALL ───────────────────────────────────────────────
+
+// ─── TO-DO ────────────────────────────────────────────────────
+let todoFilters = { daily: 'all', backlog: 'all' };
+
+function getTodos() {
+  try { return JSON.parse(localStorage.getItem('todos') || '[]'); } catch { return []; }
+}
+function saveTodos(todos) {
+  try { localStorage.setItem('todos', JSON.stringify(todos)); } catch {}
+}
+
+function addTodo() {
+  const title = document.getElementById('todo-title').value.trim();
+  if (!title) return;
+  const priority = document.getElementById('todo-priority').value;
+  const type     = document.getElementById('todo-type').value;
+  const category = document.getElementById('todo-category').value.trim();
+  const due      = document.getElementById('todo-due').value;
+  const todos = getTodos();
+  todos.unshift({
+    id: Date.now(),
+    title, priority, type, category, due,
+    done: false,
+    subtasks: [],
+    dateAdded: dateKey(currentDate)
+  });
+  saveTodos(todos);
+  ['todo-title','todo-category','todo-due'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('todo-priority').value = 'medium';
+  document.getElementById('todo-type').value = 'daily';
+  renderTodos();
+}
+
+function toggleTodo(id) {
+  const todos = getTodos();
+  const t = todos.find(t => t.id === id);
+  if (t) t.done = !t.done;
+  saveTodos(todos);
+  renderTodos();
+}
+
+function deleteTodo(id) {
+  saveTodos(getTodos().filter(t => t.id !== id));
+  renderTodos();
+}
+
+function moveTodo(id, newType) {
+  const todos = getTodos();
+  const t = todos.find(t => t.id === id);
+  if (t) t.type = newType;
+  saveTodos(todos);
+  renderTodos();
+}
+
+function addSubtask(todoId) {
+  const input = document.getElementById('sub-input-' + todoId);
+  const text = input ? input.value.trim() : '';
+  if (!text) return;
+  const todos = getTodos();
+  const t = todos.find(t => t.id === todoId);
+  if (t) { if (!t.subtasks) t.subtasks = []; t.subtasks.push({ id: Date.now(), text, done: false }); }
+  saveTodos(todos);
+  renderTodos();
+}
+
+function toggleSubtask(todoId, subId) {
+  const todos = getTodos();
+  const t = todos.find(t => t.id === todoId);
+  if (t && t.subtasks) { const s = t.subtasks.find(s => s.id === subId); if (s) s.done = !s.done; }
+  saveTodos(todos);
+  renderTodos();
+}
+
+function deleteSubtask(todoId, subId) {
+  const todos = getTodos();
+  const t = todos.find(t => t.id === todoId);
+  if (t) t.subtasks = (t.subtasks||[]).filter(s => s.id !== subId);
+  saveTodos(todos);
+  renderTodos();
+}
+
+function setFilter(list, val, btn) {
+  todoFilters[list] = val;
+  const bar = document.getElementById('filter-bar-' + list);
+  if (bar) bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderTodos();
+}
+
+function isOverdue(due) {
+  if (!due) return false;
+  const today = dateKey(new Date());
+  return due < today;
+}
+
+function buildTodoItem(t) {
+  const overdue = !t.done && isOverdue(t.due);
+  const subtasksDone = (t.subtasks||[]).filter(s=>s.done).length;
+  const subtasksTotal = (t.subtasks||[]).length;
+  const moveBtn = t.type === 'daily'
+    ? `<button class="todo-btn" onclick="moveTodo(${t.id},'backlog')" title="Move to Backlog">📌</button>`
+    : `<button class="todo-btn" onclick="moveTodo(${t.id},'daily')" title="Move to Today">📅</button>`;
+
+  const subtasksHTML = subtasksTotal ? `
+    <div class="todo-subtasks">
+      ${(t.subtasks||[]).map(s => `
+        <div class="subtask-item ${s.done?'sub-done':''}">
+          <div class="subtask-check" onclick="toggleSubtask(${t.id},${s.id})">${s.done?'✓':''}</div>
+          <span>${s.text}</span>
+          <button class="todo-btn" onclick="deleteSubtask(${t.id},${s.id})" style="margin-left:auto;font-size:0.6rem">✕</button>
+        </div>`).join('')}
+    </div>` : '';
+
+  return `
+    <div class="todo-item ${t.done?'done-item':''}" data-priority="${t.priority}">
+      <div class="todo-top">
+        <div class="todo-check" onclick="toggleTodo(${t.id})">${t.done?'✓':''}</div>
+        <span class="todo-title" onclick="toggleTodo(${t.id})">${t.title}</span>
+        <div class="todo-actions">
+          ${moveBtn}
+          <button class="todo-btn" onclick="deleteTodo(${t.id})">✕</button>
+        </div>
+      </div>
+      <div class="todo-meta">
+        <span class="priority-badge ${t.priority}">${t.priority}</span>
+        ${t.category ? `<span class="todo-tag">${t.category}</span>` : ''}
+        ${t.due ? `<span class="todo-due ${overdue?'overdue':''}">📅 ${overdue?'Overdue: ':''}${t.due}</span>` : ''}
+        ${subtasksTotal ? `<span class="todo-tag">${subtasksDone}/${subtasksTotal} subtasks</span>` : ''}
+      </div>
+      ${subtasksHTML}
+      <div class="subtask-add" style="margin-top:0.4rem;margin-left:1.6rem">
+        <input id="sub-input-${t.id}" type="text" placeholder="Add subtask…" onkeydown="if(event.key==='Enter')addSubtask(${t.id})" />
+        <button onclick="addSubtask(${t.id})">+</button>
+      </div>
+    </div>`;
+}
+
+function renderTodos() {
+  const todos = getTodos();
+  const todayKey = dateKey(currentDate);
+
+  // Daily = added today OR type daily and not backlog
+  const daily   = todos.filter(t => t.type === 'daily' && t.dateAdded === todayKey);
+  const backlog  = todos.filter(t => t.type === 'backlog');
+
+  const filterFn = (f) => (t) => f === 'all' || t.priority === f;
+
+  const dailyEl = document.getElementById('todo-daily-list');
+  const backlogEl = document.getElementById('todo-backlog-list');
+
+  const dailyFiltered = daily.filter(filterFn(todoFilters.daily));
+  const backlogFiltered = backlog.filter(filterFn(todoFilters.backlog));
+
+  if (dailyEl) {
+    dailyEl.innerHTML = dailyFiltered.length
+      ? dailyFiltered.map(buildTodoItem).join('')
+      : '<div class="empty-state">No tasks for today yet</div>';
+  }
+  if (backlogEl) {
+    backlogEl.innerHTML = backlogFiltered.length
+      ? backlogFiltered.map(buildTodoItem).join('')
+      : '<div class="empty-state">Backlog is clear!</div>';
+  }
+
+  // Stats
+  const todayDone  = daily.filter(t=>t.done).length;
+  const todayTotal = daily.length;
+  const overdueCnt = todos.filter(t=>!t.done && isOverdue(t.due)).length;
+  const pct = todayTotal ? Math.round(todayDone/todayTotal*100) : 0;
+
+  const s = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+  s('stat-today-done', todayDone);
+  s('stat-today-total', todayTotal);
+  s('stat-backlog', backlog.length);
+  s('stat-overdue', overdueCnt);
+  s('todo-progress-label', pct + '% complete');
+  const bar = document.getElementById('todo-progress-bar');
+  if (bar) bar.style.width = pct + '%';
+}
+
 function renderAll() {
   renderDashboard();
   renderFood();
@@ -1402,6 +1750,7 @@ function renderAll() {
   renderNotes();
   renderWeekly();
   renderLibrary();
+  renderTodos();
 }
 
 // ─── INIT ─────────────────────────────────────────────────────
