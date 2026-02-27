@@ -834,6 +834,111 @@ textarea:focus { border-color: var(--ink); }
 .recipe-detail-section { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3); margin: 0.5rem 0 0.2rem; }
 .recipe-ing-item, .recipe-step-item { font-size: 0.72rem; color: var(--ink2); padding: 0.15rem 0; display: flex; gap: 0.5rem; }
 .recipe-step-num { font-size: 0.58rem; background: var(--food); color: white; border-radius: 50%; width:15px; height:15px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+
+/* ── RECIPE BOOK ─────────────────────────────────── */
+.rb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.1rem;
+  margin-bottom: 2rem;
+}
+.rb-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+  animation: rise 0.25s ease both;
+}
+.rb-card:hover { border-color: var(--food); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+.rb-card-header {
+  background: var(--food);
+  padding: 1rem 1rem 0.7rem;
+  position: relative;
+}
+.rb-card-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.05rem;
+  color: white;
+  line-height: 1.2;
+  margin-bottom: 0.2rem;
+}
+.rb-card-sub { font-size: 0.62rem; color: rgba(255,255,255,0.75); letter-spacing: 0.06em; }
+.rb-card-body { padding: 0.8rem 1rem; }
+.rb-card-times {
+  display: flex; gap: 0.8rem; margin-bottom: 0.6rem;
+  font-size: 0.62rem; color: var(--ink3);
+}
+.rb-nutrition-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.3rem;
+  margin-bottom: 0.7rem;
+}
+.rb-nut-cell {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.3rem 0.4rem;
+  text-align: center;
+}
+.rb-nut-val { font-family: 'DM Serif Display', serif; font-size: 0.95rem; line-height: 1; }
+.rb-nut-lbl { font-size: 0.52rem; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 1px; }
+.rb-card-footer {
+  padding: 0.6rem 1rem;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 0.4rem; justify-content: flex-end;
+}
+.rb-card-footer button {
+  background: none; border: 1px solid var(--border); border-radius: 4px;
+  padding: 3px 9px; font-size: 0.65rem; cursor: pointer;
+  font-family: 'DM Mono', monospace; color: var(--ink2); transition: all 0.15s;
+}
+.rb-card-footer button:hover { background: var(--food); color: white; border-color: var(--food); }
+.rb-card-footer .rb-view-btn { background: var(--food); color: white; border-color: var(--food); }
+.rb-card-footer .rb-view-btn:hover { opacity: 0.85; }
+
+/* RECIPE DETAIL MODAL */
+.rb-detail-header {
+  padding: 1.5rem 1.6rem 1rem;
+  background: var(--food);
+  color: white;
+  position: relative;
+}
+.rb-detail-header h2 { font-family: 'DM Serif Display', serif; font-size: 1.6rem; line-height: 1.1; margin-bottom: 0.3rem; }
+.rb-detail-header .rb-sub { font-size: 0.7rem; opacity: 0.8; letter-spacing: 0.06em; }
+.rb-detail-close { position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.2); border: none; color: white; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+.rb-detail-close:hover { background: rgba(255,255,255,0.35); }
+.rb-detail-body { padding: 1.2rem 1.6rem 1.6rem; }
+.rb-detail-section-title {
+  font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink3); margin: 1.2rem 0 0.5rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.rb-detail-section-title::after { content:''; flex:1; height:1px; background: var(--border); }
+.rb-nut-full {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(90px,1fr));
+  gap: 0.5rem; margin-bottom: 0.5rem;
+}
+.rb-nut-full-cell {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 5px; padding: 0.5rem; text-align: center;
+}
+.rb-nut-full-cell .val { font-family: 'DM Serif Display', serif; font-size: 1.2rem; line-height: 1; }
+.rb-nut-full-cell .lbl { font-size: 0.55rem; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+.rb-ing-table { width: 100%; border-collapse: collapse; }
+.rb-ing-table td { padding: 0.35rem 0.5rem; font-size: 0.75rem; border-bottom: 1px solid var(--surface2); }
+.rb-ing-table tr:last-child td { border-bottom: none; }
+.rb-ing-table td:first-child { color: var(--ink3); font-size: 0.65rem; width: 30%; }
+.rb-step-item-view { display: flex; gap: 0.8rem; margin-bottom: 0.8rem; align-items: flex-start; }
+.rb-step-num-view {
+  background: var(--food); color: white; border-radius: 50%;
+  min-width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+}
+.rb-step-text-view { font-size: 0.78rem; line-height: 1.7; color: var(--ink2); }
+.rb-notes-box { background: var(--surface2); border-left: 3px solid var(--food); padding: 0.7rem 1rem; border-radius: 0 4px 4px 0; font-size: 0.75rem; color: var(--ink2); line-height: 1.7; }
 </style>
 </head>
 <body>
@@ -903,6 +1008,7 @@ textarea:focus { border-color: var(--ink); }
     <div class="sub-tabs">
       <button class="sub-tab active" id="stab-log" onclick="switchFoodTab('log',this)">🍽 Food Log</button>
       <button class="sub-tab" id="stab-recipe" onclick="switchFoodTab('recipe',this)">🍲 Meals</button>
+      <button class="sub-tab" id="stab-recipebook" onclick="switchFoodTab('recipebook',this)">📖 Recipes</button>
     </div>
 
     <!-- SUB: Food Log -->
@@ -1036,6 +1142,112 @@ textarea:focus { border-color: var(--ink); }
             <button class="btn-add" onclick="clearRecipeForm()" style="background:var(--surface2);color:var(--ink2);border:1px solid var(--border)">✕ Clear</button>
             <button class="btn-add" onclick="saveRecipe()" style="background:var(--food)">💾 Save Meal</button>
           </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SUB: Recipe Book -->
+    <div id="sfood-recipebook" style="display:none">
+
+      <!-- Top bar -->
+      <div class="meal-topbar">
+        <input type="text" id="rb-search" placeholder="🔍 Search recipes…" oninput="renderRecipeBook()"
+          class="meal-search" />
+        <select id="rb-filter-cat" onchange="renderRecipeBook()"
+          style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:0.45rem 0.7rem;font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--ink);outline:none;">
+          <option value="">All categories</option>
+        </select>
+        <button class="btn-add" onclick="openRecipeBookForm(null)" style="white-space:nowrap">+ New Recipe</button>
+      </div>
+
+      <!-- Recipe cards grid -->
+      <div id="rb-list"></div>
+
+      <!-- ADD / EDIT MODAL -->
+      <div id="rb-modal-overlay" class="meal-modal-overlay" onclick="closeRecipeBookForm(event)">
+        <div class="meal-modal" style="max-width:900px" onclick="event.stopPropagation()">
+          <div class="meal-modal-header">
+            <span id="rb-form-title" style="font-family:'DM Serif Display',serif;font-size:1.3rem">New Recipe</span>
+            <button onclick="closeRecipeBookForm()" class="log-del" style="font-size:1rem">✕</button>
+          </div>
+          <input type="hidden" id="rb-edit-id" value="" />
+
+          <!-- 3-col form body -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.2rem;padding:1.2rem 1.4rem">
+
+            <!-- COL 1: Basic info + nutrition -->
+            <div>
+              <div class="card-label" style="margin-bottom:0.4rem">Recipe name *</div>
+              <div class="form-row"><input type="text" id="rb-name" placeholder="e.g. Nasi Goreng Kampung" /></div>
+
+              <div class="form-row" style="margin-top:0.3rem">
+                <input type="text" id="rb-category" placeholder="Category (e.g. Breakfast)" />
+                <input type="text" id="rb-cuisine" placeholder="Cuisine (e.g. Indonesian)" />
+              </div>
+
+              <div class="form-row">
+                <input type="number" id="rb-servings" placeholder="Servings" min="1" value="1" />
+                <input type="number" id="rb-preptime" placeholder="Prep (min)" min="0" />
+                <input type="number" id="rb-cooktime" placeholder="Cook (min)" min="0" />
+              </div>
+
+              <div class="card-label" style="margin:0.9rem 0 0.5rem">Nutrition <span style="font-weight:400;color:var(--ink3)">per serving</span></div>
+              <div class="form-row">
+                <input type="number" id="rb-cal"     placeholder="Calories"   min="0" />
+                <input type="number" id="rb-protein" placeholder="Protein (g)" min="0" />
+              </div>
+              <div class="form-row">
+                <input type="number" id="rb-carbs"   placeholder="Carbs (g)"  min="0" />
+                <input type="number" id="rb-fat"     placeholder="Fat (g)"    min="0" />
+              </div>
+              <div class="form-row">
+                <input type="number" id="rb-fiber"   placeholder="Fiber (g)"  min="0" />
+                <input type="number" id="rb-sugar"   placeholder="Sugar (g)"  min="0" />
+                <input type="number" id="rb-sodium"  placeholder="Sodium (mg)" min="0" />
+              </div>
+
+              <div class="card-label" style="margin:0.9rem 0 0.4rem">Notes / Description</div>
+              <textarea id="rb-notes" placeholder="Any notes about this recipe…"
+                style="width:100%;min-height:80px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:0.5rem 0.7rem;font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--ink);resize:vertical;outline:none;line-height:1.6"></textarea>
+            </div>
+
+            <!-- COL 2: Ingredients -->
+            <div>
+              <div class="card-label" style="margin-bottom:0.5rem">Ingredients</div>
+              <div id="rb-ing-list" style="max-height:340px;overflow-y:auto;margin-bottom:0.5rem"></div>
+              <div class="form-row">
+                <input type="text" id="rb-ing-name" placeholder="Ingredient" onkeydown="if(event.key==='Enter')addRbIng()" />
+              </div>
+              <div class="form-row">
+                <input type="text" id="rb-ing-qty"  placeholder="Amount (e.g. 2 cups)" />
+                <input type="text" id="rb-ing-note" placeholder="Note (optional)" />
+                <button class="btn-add" onclick="addRbIng()" style="padding:0.45rem 0.7rem">+</button>
+              </div>
+            </div>
+
+            <!-- COL 3: Steps -->
+            <div>
+              <div class="card-label" style="margin-bottom:0.5rem">Cooking Steps</div>
+              <div id="rb-steps-list" style="max-height:340px;overflow-y:auto;margin-bottom:0.5rem"></div>
+              <div class="form-row">
+                <input type="text" id="rb-step-text" placeholder="Describe this step…" onkeydown="if(event.key==='Enter')addRbStep()" />
+                <button class="btn-add" onclick="addRbStep()" style="padding:0.45rem 0.7rem">+</button>
+              </div>
+            </div>
+
+          </div>
+
+          <div style="display:flex;gap:0.5rem;padding:0.8rem 1.4rem 1.2rem;border-top:1px solid var(--border);justify-content:flex-end">
+            <button class="btn-add" onclick="clearRbForm()" style="background:var(--surface2);color:var(--ink2);border:1px solid var(--border)">✕ Clear</button>
+            <button class="btn-add" onclick="saveRbRecipe()" style="background:var(--food)">💾 Save Recipe</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DETAIL VIEW MODAL -->
+      <div id="rb-detail-overlay" class="meal-modal-overlay" onclick="closeRbDetail(event)">
+        <div id="rb-detail-modal" class="meal-modal" style="max-width:760px" onclick="event.stopPropagation()">
         </div>
       </div>
 
@@ -1333,11 +1545,13 @@ function switchTab(name) {
 
 // ─── FOOD SUB-TABS ────────────────────────────────────────────
 function switchFoodTab(name, btn) {
-  document.getElementById('sfood-log').style.display    = name==='log'    ? '' : 'none';
-  document.getElementById('sfood-recipe').style.display = name==='recipe' ? '' : 'none';
+  document.getElementById('sfood-log').style.display         = name==='log'         ? '' : 'none';
+  document.getElementById('sfood-recipe').style.display      = name==='recipe'      ? '' : 'none';
+  document.getElementById('sfood-recipebook').style.display  = name==='recipebook'  ? '' : 'none';
   document.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
-  if (name === 'recipe') renderRecipeList();
+  if (name === 'recipe')      renderRecipeList();
+  if (name === 'recipebook')  renderRecipeBook();
 }
 
 // ─── RECIPE STORE ─────────────────────────────────────────────
@@ -1692,6 +1906,7 @@ function deleteFoodFromLibrary(id) {
   renderLibrary();
   renderTodos();
   renderRecipeList();
+  renderRecipeBook();
 }
 
 function fillFromLibrary(item) {
@@ -2378,6 +2593,265 @@ function renderTodos() {
   if (bar) bar.style.width = pct + '%';
 }
 
+
+// ─── RECIPE BOOK ──────────────────────────────────────────────
+let rbIngredients = [];
+let rbSteps = [];
+
+function getRbRecipes() {
+  try { return JSON.parse(localStorage.getItem('rbRecipes') || '[]'); } catch { return []; }
+}
+function saveRbRecipes(r) {
+  try { localStorage.setItem('rbRecipes', JSON.stringify(r)); } catch {}
+}
+
+function openRecipeBookForm(id) {
+  if (id) editRbRecipe(id); else clearRbForm();
+  document.getElementById('rb-modal-overlay').classList.add('open');
+}
+function closeRecipeBookForm(e) {
+  if (e && e.target !== document.getElementById('rb-modal-overlay')) return;
+  document.getElementById('rb-modal-overlay').classList.remove('open');
+}
+function closeRbDetail(e) {
+  if (e && e.target !== document.getElementById('rb-detail-overlay')) return;
+  document.getElementById('rb-detail-overlay').classList.remove('open');
+}
+
+function addRbIng() {
+  const name = document.getElementById('rb-ing-name').value.trim();
+  const qty  = document.getElementById('rb-ing-qty').value.trim();
+  const note = document.getElementById('rb-ing-note').value.trim();
+  if (!name) return;
+  rbIngredients.push({ id: Date.now(), name, qty, note });
+  ['rb-ing-name','rb-ing-qty','rb-ing-note'].forEach(id => document.getElementById(id).value='');
+  renderRbIngList();
+}
+function removeRbIng(id) {
+  rbIngredients = rbIngredients.filter(i => i.id !== id);
+  renderRbIngList();
+}
+function renderRbIngList() {
+  const el = document.getElementById('rb-ing-list'); if (!el) return;
+  if (!rbIngredients.length) { el.innerHTML = '<div style="font-size:0.7rem;color:var(--ink3);padding:0.3rem 0">No ingredients yet</div>'; return; }
+  el.innerHTML = rbIngredients.map((i,idx) => `
+    <div class="ing-item-build">
+      <span style="color:var(--ink3);min-width:18px;font-size:0.62rem">${idx+1}.</span>
+      <span><strong>${i.qty ? i.qty+' ' : ''}${i.name}</strong>${i.note ? ' <span style="color:var(--ink3)">— '+i.note+'</span>' : ''}</span>
+      <button class="ing-del" onclick="removeRbIng(${i.id})">✕</button>
+    </div>`).join('');
+}
+
+function addRbStep() {
+  const text = document.getElementById('rb-step-text').value.trim();
+  if (!text) return;
+  rbSteps.push({ id: Date.now(), text });
+  document.getElementById('rb-step-text').value = '';
+  renderRbStepsList();
+}
+function removeRbStep(id) {
+  rbSteps = rbSteps.filter(s => s.id !== id);
+  renderRbStepsList();
+}
+function renderRbStepsList() {
+  const el = document.getElementById('rb-steps-list'); if (!el) return;
+  if (!rbSteps.length) { el.innerHTML = '<div style="font-size:0.7rem;color:var(--ink3);padding:0.3rem 0">No steps yet</div>'; return; }
+  el.innerHTML = rbSteps.map((s,i) => `
+    <div class="ing-item-build">
+      <span style="background:var(--food);color:white;border-radius:50%;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;flex-shrink:0">${i+1}</span>
+      <span>${s.text}</span>
+      <button class="ing-del" onclick="removeRbStep(${s.id})">✕</button>
+    </div>`).join('');
+}
+
+function saveRbRecipe() {
+  const name = document.getElementById('rb-name').value.trim();
+  if (!name) { alert('Please enter a recipe name'); return; }
+  const editId = document.getElementById('rb-edit-id').value;
+  const recipe = {
+    id: editId ? parseInt(editId) : Date.now(),
+    name,
+    category:  document.getElementById('rb-category').value.trim(),
+    cuisine:   document.getElementById('rb-cuisine').value.trim(),
+    servings:  parseInt(document.getElementById('rb-servings').value) || 1,
+    preptime:  parseInt(document.getElementById('rb-preptime').value) || 0,
+    cooktime:  parseInt(document.getElementById('rb-cooktime').value) || 0,
+    cal:     parseFloat(document.getElementById('rb-cal').value)     || 0,
+    protein: parseFloat(document.getElementById('rb-protein').value) || 0,
+    carbs:   parseFloat(document.getElementById('rb-carbs').value)   || 0,
+    fat:     parseFloat(document.getElementById('rb-fat').value)     || 0,
+    fiber:   parseFloat(document.getElementById('rb-fiber').value)   || 0,
+    sugar:   parseFloat(document.getElementById('rb-sugar').value)   || 0,
+    sodium:  parseFloat(document.getElementById('rb-sodium').value)  || 0,
+    notes:   document.getElementById('rb-notes').value.trim(),
+    ingredients: [...rbIngredients],
+    steps:       [...rbSteps],
+    createdAt: new Date().toISOString()
+  };
+  const recipes = getRbRecipes();
+  if (editId) {
+    const idx = recipes.findIndex(r => r.id === parseInt(editId));
+    if (idx > -1) recipes[idx] = recipe; else recipes.unshift(recipe);
+  } else {
+    recipes.unshift(recipe);
+  }
+  saveRbRecipes(recipes);
+  clearRbForm();
+  document.getElementById('rb-modal-overlay').classList.remove('open');
+  renderRecipeBook();
+}
+
+function clearRbForm() {
+  ['rb-edit-id','rb-name','rb-category','rb-cuisine','rb-preptime','rb-cooktime',
+   'rb-cal','rb-protein','rb-carbs','rb-fat','rb-fiber','rb-sugar','rb-sodium','rb-notes',
+   'rb-ing-name','rb-ing-qty','rb-ing-note','rb-step-text'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.getElementById('rb-servings').value = '1';
+  document.getElementById('rb-form-title').textContent = 'New Recipe';
+  rbIngredients = []; rbSteps = [];
+  renderRbIngList(); renderRbStepsList();
+}
+
+function editRbRecipe(id) {
+  const r = getRbRecipes().find(r => r.id === id); if (!r) return;
+  document.getElementById('rb-edit-id').value  = r.id;
+  document.getElementById('rb-name').value     = r.name;
+  document.getElementById('rb-category').value = r.category  || '';
+  document.getElementById('rb-cuisine').value  = r.cuisine   || '';
+  document.getElementById('rb-servings').value = r.servings  || 1;
+  document.getElementById('rb-preptime').value = r.preptime  || '';
+  document.getElementById('rb-cooktime').value = r.cooktime  || '';
+  document.getElementById('rb-cal').value      = r.cal       || '';
+  document.getElementById('rb-protein').value  = r.protein   || '';
+  document.getElementById('rb-carbs').value    = r.carbs     || '';
+  document.getElementById('rb-fat').value      = r.fat       || '';
+  document.getElementById('rb-fiber').value    = r.fiber     || '';
+  document.getElementById('rb-sugar').value    = r.sugar     || '';
+  document.getElementById('rb-sodium').value   = r.sodium    || '';
+  document.getElementById('rb-notes').value    = r.notes     || '';
+  document.getElementById('rb-form-title').textContent = 'Edit Recipe';
+  rbIngredients = [...(r.ingredients || [])];
+  rbSteps       = [...(r.steps || [])];
+  renderRbIngList(); renderRbStepsList();
+}
+
+function deleteRbRecipe(id) {
+  if (!confirm('Delete this recipe?')) return;
+  saveRbRecipes(getRbRecipes().filter(r => r.id !== id));
+  renderRecipeBook();
+}
+
+function viewRbRecipe(id) {
+  const r = getRbRecipes().find(r => r.id === id); if (!r) return;
+  const totalTime = (r.preptime||0) + (r.cooktime||0);
+  const nutCells = [
+    ['Calories', r.cal, 'kcal'],
+    ['Protein',  r.protein, 'g'],
+    ['Carbs',    r.carbs,   'g'],
+    ['Fat',      r.fat,     'g'],
+    ['Fiber',    r.fiber,   'g'],
+    ['Sugar',    r.sugar,   'g'],
+    ['Sodium',   r.sodium,  'mg'],
+  ].map(([lbl,val,unit]) => `
+    <div class="rb-nut-full-cell">
+      <div class="val">${val||0}<span style="font-size:0.6rem;font-family:'DM Mono',monospace"> ${unit}</span></div>
+      <div class="lbl">${lbl}</div>
+    </div>`).join('');
+
+  const ingsHTML = (r.ingredients||[]).length
+    ? `<table class="rb-ing-table">${(r.ingredients).map(i=>`<tr><td>${i.qty||'—'}</td><td>${i.name}${i.note?' <span style="color:var(--ink3);font-size:0.65rem">'+i.note+'</span>':''}</td></tr>`).join('')}</table>`
+    : '<div style="font-size:0.72rem;color:var(--ink3)">No ingredients listed</div>';
+
+  const stepsHTML = (r.steps||[]).length
+    ? (r.steps).map((s,i) => `<div class="rb-step-item-view"><div class="rb-step-num-view">${i+1}</div><div class="rb-step-text-view">${s.text}</div></div>`).join('')
+    : '<div style="font-size:0.72rem;color:var(--ink3)">No steps listed</div>';
+
+  document.getElementById('rb-detail-modal').innerHTML = `
+    <div class="rb-detail-header">
+      <button class="rb-detail-close" onclick="document.getElementById('rb-detail-overlay').classList.remove('open')">✕</button>
+      <h2>${r.name}</h2>
+      <div class="rb-sub">
+        ${r.category ? r.category : ''}${r.cuisine ? ' · '+r.cuisine : ''}
+        &nbsp;·&nbsp; ${r.servings} serving${r.servings>1?'s':''}
+        ${totalTime ? ' · ⏱ '+ totalTime +' min total' : ''}
+        ${r.preptime ? ' (prep '+r.preptime+'min' : ''}${r.cooktime ? ' · cook '+r.cooktime+'min)' : (r.preptime ? ')' : '')}
+      </div>
+    </div>
+    <div class="rb-detail-body">
+      <div class="rb-detail-section-title">Nutrition per serving</div>
+      <div class="rb-nut-full">${nutCells}</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:0.5rem">
+        <div>
+          <div class="rb-detail-section-title">Ingredients</div>
+          ${ingsHTML}
+        </div>
+        <div>
+          <div class="rb-detail-section-title">Steps</div>
+          ${stepsHTML}
+        </div>
+      </div>
+
+      ${r.notes ? `<div class="rb-detail-section-title">Notes</div><div class="rb-notes-box">${r.notes}</div>` : ''}
+
+      <div style="display:flex;gap:0.5rem;margin-top:1.2rem;justify-content:flex-end">
+        <button class="btn-add" onclick="openRecipeBookForm(${r.id});document.getElementById('rb-detail-overlay').classList.remove('open')" style="background:var(--ink2)">✏️ Edit</button>
+      </div>
+    </div>`;
+  document.getElementById('rb-detail-overlay').classList.add('open');
+}
+
+function renderRecipeBook() {
+  const el = document.getElementById('rb-list'); if (!el) return;
+  const q   = (document.getElementById('rb-search')||{}).value || '';
+  const cat = (document.getElementById('rb-filter-cat')||{}).value || '';
+  let recipes = getRbRecipes();
+
+  // Populate category filter
+  const catEl = document.getElementById('rb-filter-cat');
+  if (catEl) {
+    const cats = [...new Set(recipes.map(r=>r.category).filter(Boolean))];
+    const curVal = catEl.value;
+    catEl.innerHTML = '<option value="">All categories</option>' +
+      cats.map(c=>`<option value="${c}" ${curVal===c?'selected':''}>${c}</option>`).join('');
+  }
+
+  if (q)   recipes = recipes.filter(r => r.name.toLowerCase().includes(q.toLowerCase()) || (r.category||'').toLowerCase().includes(q.toLowerCase()) || (r.cuisine||'').toLowerCase().includes(q.toLowerCase()));
+  if (cat) recipes = recipes.filter(r => r.category === cat);
+
+  if (!recipes.length) {
+    el.innerHTML = '<div class="empty-state" style="padding:3rem">No recipes yet.<br>Click <strong>+ New Recipe</strong> to add your first one!</div>';
+    return;
+  }
+
+  el.innerHTML = '<div class="rb-grid">' + recipes.map((r,i) => `
+    <div class="rb-card" style="animation-delay:${i*0.04}s">
+      <div class="rb-card-header">
+        <div class="rb-card-name">${r.name}</div>
+        <div class="rb-card-sub">
+          ${r.category||''}${r.cuisine?' · '+r.cuisine:''}
+          &nbsp;·&nbsp; ${r.servings} serving${r.servings>1?'s':''}
+          ${(r.preptime||r.cooktime) ? ' · ⏱ '+((r.preptime||0)+(r.cooktime||0))+'min' : ''}
+        </div>
+      </div>
+      <div class="rb-card-body">
+        <div class="rb-nutrition-row">
+          <div class="rb-nut-cell"><div class="rb-nut-val">${r.cal}</div><div class="rb-nut-lbl">kcal</div></div>
+          <div class="rb-nut-cell"><div class="rb-nut-val">${r.protein}g</div><div class="rb-nut-lbl">protein</div></div>
+          <div class="rb-nut-cell"><div class="rb-nut-val">${r.carbs}g</div><div class="rb-nut-lbl">carbs</div></div>
+          <div class="rb-nut-cell"><div class="rb-nut-val">${r.fat}g</div><div class="rb-nut-lbl">fat</div></div>
+        </div>
+        ${r.ingredients&&r.ingredients.length ? `<div style="font-size:0.62rem;color:var(--ink3)">${r.ingredients.length} ingredient${r.ingredients.length>1?'s':''} · ${r.steps&&r.steps.length?r.steps.length+' step'+(r.steps.length>1?'s':''):'no steps'}</div>` : ''}
+      </div>
+      <div class="rb-card-footer">
+        <button class="rb-view-btn" onclick="viewRbRecipe(${r.id})">👁 View</button>
+        <button onclick="openRecipeBookForm(${r.id})">✏️ Edit</button>
+        <button onclick="deleteRbRecipe(${r.id})">✕</button>
+      </div>
+    </div>`).join('') + '</div>';
+}
+
 function renderAll() {
   renderDashboard();
   renderFood();
@@ -2390,6 +2864,7 @@ function renderAll() {
   renderLibrary();
   renderTodos();
   renderRecipeList();
+  renderRecipeBook();
 }
 
 // ─── INIT ─────────────────────────────────────────────────────
