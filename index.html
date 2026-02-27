@@ -609,6 +609,231 @@ textarea:focus { border-color: var(--ink); }
   border-top: 2px dashed var(--border);
   margin: 1.8rem 0;
 }
+
+/* SUB-TABS */
+.sub-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.4rem;
+  border-bottom: 2px solid var(--border);
+}
+.sub-tab {
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  border: none;
+  background: none;
+  color: var(--ink3);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.sub-tab:hover { color: var(--ink); }
+.sub-tab.active { color: var(--food); border-bottom-color: var(--food); font-weight: 500; }
+
+/* ── MEAL PAGE ──────────────────────────────────── */
+.meal-topbar {
+  display: flex; align-items: center; gap: 0.8rem;
+  margin-bottom: 1rem; flex-wrap: wrap;
+}
+.meal-search {
+  flex: 1; min-width: 160px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 4px; padding: 0.45rem 0.7rem;
+  font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--ink); outline: none;
+}
+.meal-view-toggle { display: flex; gap: 0; }
+.view-btn {
+  background: var(--surface2); border: 1px solid var(--border);
+  font-size: 1rem; padding: 0.3rem 0.6rem; cursor: pointer;
+  color: var(--ink3); transition: all 0.15s;
+}
+.view-btn:first-child { border-radius: 4px 0 0 4px; }
+.view-btn:last-child  { border-radius: 0 4px 4px 0; border-left: none; }
+.view-btn.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* Category pills */
+.meal-cats { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.meal-cat-pill {
+  font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 20px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface2); color: var(--ink3);
+  transition: all 0.15s;
+}
+.meal-cat-pill.active { background: var(--food); color: white; border-color: var(--food); }
+
+/* GRID VIEW */
+.meal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.meal-grid-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+  animation: rise 0.25s ease both;
+  position: relative;
+}
+.meal-grid-card:hover { border-color: var(--food); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.07); }
+.meal-grid-card-color {
+  height: 6px;
+  background: var(--food);
+}
+.meal-grid-card-body { padding: 0.9rem; }
+.meal-grid-card-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1rem; line-height: 1.2;
+  margin-bottom: 0.3rem;
+}
+.meal-grid-card-cat { font-size: 0.62rem; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.6rem; }
+.meal-grid-macros { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+.meal-macro-badge {
+  font-size: 0.58rem; padding: 2px 6px; border-radius: 8px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--ink2);
+}
+.meal-grid-card-actions {
+  display: flex; gap: 4px; padding: 0 0.9rem 0.8rem;
+  justify-content: flex-end;
+}
+.meal-grid-card-actions button {
+  background: none; border: 1px solid var(--border); border-radius: 4px;
+  padding: 3px 8px; font-size: 0.65rem; cursor: pointer;
+  font-family: 'DM Mono', monospace; color: var(--ink2);
+  transition: all 0.15s;
+}
+.meal-grid-card-actions button:hover { background: var(--food); color: white; border-color: var(--food); }
+.meal-grid-card-actions .log-btn { background: var(--food); color: white; border-color: var(--food); }
+.meal-grid-card-actions .log-btn:hover { opacity: 0.85; }
+
+/* LIST VIEW */
+.meal-list-table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
+.meal-list-table th {
+  font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink3); text-align: left; padding: 0.5rem 0.8rem;
+  border-bottom: 2px solid var(--border); font-weight: 500;
+}
+.meal-list-row {
+  border-bottom: 1px solid var(--border);
+  animation: rise 0.2s ease both;
+  transition: background 0.15s;
+}
+.meal-list-row:hover { background: var(--surface2); }
+.meal-list-row td { padding: 0.7rem 0.8rem; font-size: 0.75rem; vertical-align: middle; }
+.meal-list-row .ml-name { font-weight: 500; }
+.meal-list-row .ml-cat { font-size: 0.65rem; color: var(--ink3); }
+.meal-list-actions { display: flex; gap: 4px; }
+.meal-list-actions button {
+  background: none; border: 1px solid var(--border); border-radius: 3px;
+  padding: 2px 7px; font-size: 0.62rem; cursor: pointer;
+  font-family: 'DM Mono', monospace; color: var(--ink2); transition: all 0.15s;
+}
+.meal-list-actions button:hover { background: var(--food); color: white; border-color: var(--food); }
+.meal-list-actions .log-btn { background: var(--food); color: white; border-color: var(--food); }
+
+/* MEAL PLANNER */
+.meal-planner-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 1.2rem;
+  margin-top: 0.5rem;
+}
+.meal-planner-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1rem; margin-bottom: 0.9rem;
+}
+.meal-planner-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+@media (max-width: 700px) { .meal-planner-grid { grid-template-columns: repeat(4, 1fr); } }
+.planner-day {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 0.5rem;
+  min-height: 90px;
+}
+.planner-day.today { border-color: var(--food); background: #fff5f2; }
+.planner-day-label { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink3); margin-bottom: 0.4rem; }
+.planner-day-date  { font-family: 'DM Serif Display', serif; font-size: 1.1rem; margin-bottom: 0.4rem; }
+.planner-meal-chip {
+  font-size: 0.6rem; padding: 2px 6px; border-radius: 3px;
+  background: var(--food); color: white;
+  margin-bottom: 2px; cursor: pointer;
+  display: flex; align-items: center; gap: 3px;
+  animation: rise 0.15s ease both;
+}
+.planner-meal-chip .chip-del { font-size: 0.55rem; opacity: 0.7; margin-left: auto; }
+.planner-add-btn {
+  background: none; border: 1px dashed var(--border); border-radius: 3px;
+  width: 100%; padding: 2px; font-size: 0.65rem; color: var(--ink3);
+  cursor: pointer; transition: all 0.15s; margin-top: 2px;
+  font-family: 'DM Mono', monospace;
+}
+.planner-add-btn:hover { border-color: var(--food); color: var(--food); }
+.planner-select {
+  width: 100%; margin-top: 4px;
+  background: var(--surface); border: 1px solid var(--food);
+  border-radius: 3px; font-size: 0.62rem; padding: 3px;
+  font-family: 'DM Mono', monospace; color: var(--ink); outline: none;
+}
+
+/* MODAL */
+.meal-modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(10,10,15,0.55); z-index: 200;
+  align-items: center; justify-content: center;
+}
+.meal-modal-overlay.open { display: flex; }
+.meal-modal {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; width: min(820px, 95vw);
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  animation: rise 0.25s ease both;
+}
+.meal-modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.2rem 1.4rem; border-bottom: 1px solid var(--border);
+}
+.meal-modal-body {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+  padding: 1.2rem 1.4rem;
+}
+@media (max-width: 580px) { .meal-modal-body { grid-template-columns: 1fr; } }
+.meal-modal-col {}
+
+/* INGREDIENT & STEP BUILDER */
+.ing-item-build, .step-item-build {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.3rem 0.5rem; background: var(--surface2);
+  border-radius: 4px; margin-bottom: 0.3rem;
+  font-size: 0.72rem; animation: rise 0.15s ease both;
+}
+.ing-item-build span, .step-item-build span { flex: 1; }
+.ing-del, .step-del {
+  background: none; border: none; cursor: pointer;
+  color: var(--ink3); font-size: 0.7rem; transition: color 0.15s;
+}
+.ing-del:hover, .step-del:hover { color: var(--accent); }
+
+/* expanded detail in list view */
+.recipe-detail { display: none; padding: 0.6rem 0.8rem; background: var(--surface2); border-top: 1px dashed var(--border); }
+.recipe-detail.open { display: block; }
+.recipe-detail-section { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3); margin: 0.5rem 0 0.2rem; }
+.recipe-ing-item, .recipe-step-item { font-size: 0.72rem; color: var(--ink2); padding: 0.15rem 0; display: flex; gap: 0.5rem; }
+.recipe-step-num { font-size: 0.58rem; background: var(--food); color: white; border-radius: 50%; width:15px; height:15px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
 </style>
 </head>
 <body>
@@ -628,12 +853,12 @@ textarea:focus { border-color: var(--ink); }
 
   <div class="tabs">
     <button class="tab active" onclick="switchTab('dashboard')">Dashboard</button>
+    <button class="tab" onclick="switchTab('todo')">☑ To-Do</button>
     <button class="tab" onclick="switchTab('food')">🍽 Food</button>
     <button class="tab" onclick="switchTab('expenses')">💸 Expenses</button>
     <button class="tab" onclick="switchTab('wellness')">🏃 Wellness</button>
     <button class="tab" onclick="switchTab('notes')">📝 Notes</button>
     <button class="tab" onclick="switchTab('weekly')">📊 Weekly</button>
-    <button class="tab" onclick="switchTab('todo')">☑ To-Do</button>
   </div>
 
   <!-- DASHBOARD -->
@@ -673,61 +898,149 @@ textarea:focus { border-color: var(--ink); }
 
   <!-- FOOD -->
   <div class="panel" id="panel-food">
-    <div class="food-three-col">
 
-      <!-- LEFT: Log form -->
-      <div class="section-box">
-        <h3><span class="dot" style="background:var(--food)"></span>Log a Meal</h3>
+    <!-- Food sub-tabs -->
+    <div class="sub-tabs">
+      <button class="sub-tab active" id="stab-log" onclick="switchFoodTab('log',this)">🍽 Food Log</button>
+      <button class="sub-tab" id="stab-recipe" onclick="switchFoodTab('recipe',this)">🍲 Meals</button>
+    </div>
 
-        <!-- Search saved foods -->
-        <div style="position:relative;margin-bottom:0.8rem">
-          <input type="text" id="food-search" placeholder="🔍 Search saved foods…" oninput="filterLibrary()" autocomplete="off"
-            style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:0.45rem 0.7rem;font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--ink);outline:none;" />
-          <div id="food-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 4px 4px;max-height:160px;overflow-y:auto;z-index:50;box-shadow:0 4px 12px rgba(0,0,0,0.1)"></div>
+    <!-- SUB: Food Log -->
+    <div id="sfood-log">
+      <div class="food-three-col">
+        <!-- LEFT: Log form -->
+        <div class="section-box">
+          <h3><span class="dot" style="background:var(--food)"></span>Log a Meal</h3>
+          <div style="position:relative;margin-bottom:0.8rem">
+            <input type="text" id="food-search" placeholder="🔍 Search saved foods…" oninput="filterLibrary()" autocomplete="off"
+              style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:0.45rem 0.7rem;font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--ink);outline:none;" />
+            <div id="food-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 4px 4px;max-height:160px;overflow-y:auto;z-index:50;box-shadow:0 4px 12px rgba(0,0,0,0.1)"></div>
+          </div>
+          <div class="form-row">
+            <input type="text" id="food-name" placeholder="Food item" />
+          </div>
+          <div class="form-row">
+            <input type="number" id="food-cal" placeholder="Calories" min="0" />
+            <input type="text" id="food-meal" placeholder="Meal (breakfast…)" />
+          </div>
+          <div class="form-row">
+            <input type="number" id="food-protein" placeholder="Protein (g)" min="0" />
+            <input type="number" id="food-carbs" placeholder="Carbs (g)" min="0" />
+            <input type="number" id="food-fat" placeholder="Fat (g)" min="0" />
+          </div>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.5rem">
+            <button class="btn-add" onclick="addFood()">+ Log</button>
+            <button class="btn-add" onclick="saveToLibrary()" style="background:var(--food)">&#128190; Save to Library</button>
+          </div>
+          <div class="log-list" id="food-list"></div>
         </div>
+        <!-- MIDDLE: Nutrition chart -->
+        <div class="section-box">
+          <h3>Nutrition Breakdown</h3>
+          <div class="chart-wrap"><canvas id="chartFood"></canvas></div>
+          <div style="margin-top:1rem">
+            <div class="card-label">Daily Totals</div>
+            <div style="display:flex; gap:1.5rem; margin-top:0.4rem; flex-wrap:wrap">
+              <div><div class="card-label">Calories</div><div id="total-cal" style="font-family:'DM Serif Display',serif;font-size:1.4rem">0</div></div>
+              <div><div class="card-label">Protein</div><div id="total-protein" style="font-family:'DM Serif Display',serif;font-size:1.4rem">0g</div></div>
+              <div><div class="card-label">Carbs</div><div id="total-carbs" style="font-family:'DM Serif Display',serif;font-size:1.4rem">0g</div></div>
+              <div><div class="card-label">Fat</div><div id="total-fat" style="font-family:'DM Serif Display',serif;font-size:1.4rem">0g</div></div>
+            </div>
+          </div>
+        </div>
+        <!-- RIGHT: Food library -->
+        <div class="section-box">
+          <h3>📚 Food Library</h3>
+          <div style="font-size:0.65rem;color:var(--ink3);margin-bottom:0.8rem;line-height:1.5">Saved foods — tap to auto-fill the form, or use the search above</div>
+          <div id="library-list" style="max-height:400px;overflow-y:auto"></div>
+        </div>
+      </div>
+    </div>
 
-        <div class="form-row">
-          <input type="text" id="food-name" placeholder="Food item" />
+    <!-- SUB: Recipes -->
+    <div id="sfood-recipe" style="display:none">
+
+      <!-- Top bar: search + view toggle + add button -->
+      <div class="meal-topbar">
+        <input type="text" id="recipe-search" placeholder="🔍 Search meals…" oninput="renderRecipeList()"
+          class="meal-search" />
+        <div class="meal-view-toggle">
+          <button class="view-btn active" id="vbtn-grid" onclick="setMealView('grid',this)" title="Grid view">⊞</button>
+          <button class="view-btn" id="vbtn-list" onclick="setMealView('list',this)" title="List view">☰</button>
         </div>
-        <div class="form-row">
-          <input type="number" id="food-cal" placeholder="Calories" min="0" />
-          <input type="text" id="food-meal" placeholder="Meal (breakfast…)" />
-        </div>
-        <div class="form-row">
-          <input type="number" id="food-protein" placeholder="Protein (g)" min="0" />
-          <input type="number" id="food-carbs" placeholder="Carbs (g)" min="0" />
-          <input type="number" id="food-fat" placeholder="Fat (g)" min="0" />
-        </div>
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.5rem">
-          <button class="btn-add" onclick="addFood()">+ Log</button>
-          <button class="btn-add" onclick="saveToLibrary()" style="background:var(--food)">&#128190; Save to Library</button>
-        </div>
-        <div class="log-list" id="food-list"></div>
+        <button class="btn-add" onclick="openMealForm(null)" style="white-space:nowrap">+ New Meal</button>
       </div>
 
-      <!-- MIDDLE: Nutrition chart -->
-      <div class="section-box">
-        <h3>Nutrition Breakdown</h3>
-        <div class="chart-wrap"><canvas id="chartFood"></canvas></div>
-        <div style="margin-top:1rem">
-          <div class="card-label">Daily Totals</div>
-          <div style="display:flex; gap:1.5rem; margin-top:0.4rem; flex-wrap:wrap">
-            <div><div class="card-label">Calories</div><div id="total-cal" style="font-family:'DM Serif Display',serif;font-size:1.4rem">0</div></div>
-            <div><div class="card-label">Protein</div><div id="total-protein" style="font-family:'DM Serif Display',serif;font-size:1.4rem">0g</div></div>
-            <div><div class="card-label">Carbs</div><div id="total-carbs" style="font-family:'DM Serif Display',serif;font-size:1.4rem">0g</div></div>
-            <div><div class="card-label">Fat</div><div id="total-fat" style="font-family:'DM Serif Display',serif;font-size:1.4rem">0g</div></div>
+      <!-- Category filter pills -->
+      <div class="meal-cats" id="meal-cats"></div>
+
+      <!-- Card grid / list -->
+      <div id="recipe-list"></div>
+
+      <!-- Meal planner strip -->
+      <div class="meal-planner-wrap">
+        <div class="meal-planner-title">📅 Meal Planner — this week</div>
+        <div class="meal-planner-grid" id="meal-planner-grid"></div>
+      </div>
+
+      <!-- ADD / EDIT MODAL overlay -->
+      <div id="meal-modal-overlay" class="meal-modal-overlay" onclick="closeMealForm(event)">
+        <div class="meal-modal" onclick="event.stopPropagation()">
+          <div class="meal-modal-header">
+            <span id="recipe-form-title" style="font-family:'DM Serif Display',serif;font-size:1.2rem">New Meal</span>
+            <button onclick="closeMealForm()" class="log-del" style="font-size:1rem">✕</button>
+          </div>
+          <input type="hidden" id="recipe-edit-id" value="" />
+
+          <div class="meal-modal-body">
+            <!-- Left col -->
+            <div class="meal-modal-col">
+              <div class="card-label" style="margin-bottom:0.4rem">Meal name</div>
+              <div class="form-row"><input type="text" id="recipe-name" placeholder="e.g. Nasi Goreng" /></div>
+              <div class="form-row">
+                <input type="text" id="recipe-category" placeholder="Category (Breakfast, Dinner…)" />
+                <input type="number" id="recipe-servings" placeholder="Servings" min="1" value="1" style="max-width:90px" />
+              </div>
+
+              <div class="card-label" style="margin:0.9rem 0 0.4rem">Nutrition <span style="font-weight:400;color:var(--ink3)">per serving</span></div>
+              <div class="form-row">
+                <input type="number" id="recipe-cal" placeholder="Calories" min="0" />
+                <input type="number" id="recipe-protein" placeholder="Protein (g)" min="0" />
+              </div>
+              <div class="form-row">
+                <input type="number" id="recipe-carbs" placeholder="Carbs (g)" min="0" />
+                <input type="number" id="recipe-fat" placeholder="Fat (g)" min="0" />
+              </div>
+            </div>
+
+            <!-- Right col -->
+            <div class="meal-modal-col">
+              <div class="card-label" style="margin-bottom:0.4rem">Ingredients</div>
+              <div id="recipe-ingredients-list" style="margin-bottom:0.4rem;max-height:120px;overflow-y:auto"></div>
+              <div class="form-row">
+                <input type="text" id="ing-name" placeholder="Ingredient" />
+                <input type="text" id="ing-qty" placeholder="Qty" style="max-width:80px"/>
+                <button class="btn-add" onclick="addIngredient()" style="padding:0.45rem 0.7rem">+</button>
+              </div>
+
+              <div class="card-label" style="margin:0.9rem 0 0.4rem">Steps</div>
+              <div id="recipe-steps-list" style="margin-bottom:0.4rem;max-height:120px;overflow-y:auto"></div>
+              <div class="form-row">
+                <input type="text" id="step-text" placeholder="Add a step…" onkeydown="if(event.key==='Enter')addStep()" />
+                <button class="btn-add" onclick="addStep()" style="padding:0.45rem 0.7rem">+</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:0.5rem;padding:1rem 1.4rem 1.2rem;border-top:1px solid var(--border);justify-content:flex-end">
+            <button class="btn-add" onclick="clearRecipeForm()" style="background:var(--surface2);color:var(--ink2);border:1px solid var(--border)">✕ Clear</button>
+            <button class="btn-add" onclick="saveRecipe()" style="background:var(--food)">💾 Save Meal</button>
           </div>
         </div>
       </div>
 
-      <!-- RIGHT: Food library -->
-      <div class="section-box">
-        <h3>📚 Food Library</h3>
-        <div style="font-size:0.65rem;color:var(--ink3);margin-bottom:0.8rem;line-height:1.5">Saved foods — tap to auto-fill the form, or use the search above</div>
-        <div id="library-list" style="max-height:400px;overflow-y:auto"></div>
-      </div>
-
     </div>
+
   </div>
 
   <!-- EXPENSES -->
@@ -1017,6 +1330,330 @@ function switchTab(name) {
 }
 
 // ─── FOOD ─────────────────────────────────────────────────────
+
+// ─── FOOD SUB-TABS ────────────────────────────────────────────
+function switchFoodTab(name, btn) {
+  document.getElementById('sfood-log').style.display    = name==='log'    ? '' : 'none';
+  document.getElementById('sfood-recipe').style.display = name==='recipe' ? '' : 'none';
+  document.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  if (name === 'recipe') renderRecipeList();
+}
+
+// ─── RECIPE STORE ─────────────────────────────────────────────
+function getRecipes() {
+  try { return JSON.parse(localStorage.getItem('recipes') || '[]'); } catch { return []; }
+}
+function saveRecipes(r) {
+  try { localStorage.setItem('recipes', JSON.stringify(r)); } catch {}
+}
+
+// Temp ingredient / step builders
+let tempIngredients = [];
+let tempSteps = [];
+
+function addIngredient() {
+  const name = document.getElementById('ing-name').value.trim();
+  const qty  = document.getElementById('ing-qty').value.trim();
+  if (!name) return;
+  tempIngredients.push({ id: Date.now(), name, qty });
+  document.getElementById('ing-name').value = '';
+  document.getElementById('ing-qty').value  = '';
+  renderIngBuilderList();
+}
+
+function removeIngredient(id) {
+  tempIngredients = tempIngredients.filter(i => i.id !== id);
+  renderIngBuilderList();
+}
+
+function renderIngBuilderList() {
+  const el = document.getElementById('recipe-ingredients-list');
+  if (!el) return;
+  el.innerHTML = tempIngredients.map(i => `
+    <div class="ing-item-build">
+      <span>${i.name}${i.qty ? ' — ' + i.qty : ''}</span>
+      <button class="ing-del" onclick="removeIngredient(${i.id})">✕</button>
+    </div>`).join('');
+}
+
+function addStep() {
+  const text = document.getElementById('step-text').value.trim();
+  if (!text) return;
+  tempSteps.push({ id: Date.now(), text });
+  document.getElementById('step-text').value = '';
+  renderStepsBuilderList();
+}
+
+function removeStep(id) {
+  tempSteps = tempSteps.filter(s => s.id !== id);
+  renderStepsBuilderList();
+}
+
+function renderStepsBuilderList() {
+  const el = document.getElementById('recipe-steps-list');
+  if (!el) return;
+  el.innerHTML = tempSteps.map((s, i) => `
+    <div class="step-item-build">
+      <span style="color:var(--ink3);font-size:0.65rem;min-width:16px">${i+1}.</span>
+      <span>${s.text}</span>
+      <button class="step-del" onclick="removeStep(${s.id})">✕</button>
+    </div>`).join('');
+}
+
+function saveRecipe() {
+  const name     = document.getElementById('recipe-name').value.trim();
+  const category = document.getElementById('recipe-category').value.trim();
+  const servings = parseInt(document.getElementById('recipe-servings').value) || 1;
+  const cal      = parseFloat(document.getElementById('recipe-cal').value)     || 0;
+  const protein  = parseFloat(document.getElementById('recipe-protein').value) || 0;
+  const carbs    = parseFloat(document.getElementById('recipe-carbs').value)   || 0;
+  const fat      = parseFloat(document.getElementById('recipe-fat').value)     || 0;
+  const editId   = document.getElementById('recipe-edit-id').value;
+
+  if (!name) { alert('Please enter a recipe name'); return; }
+
+  const recipes = getRecipes();
+  const recipe = {
+    id: editId ? parseInt(editId) : Date.now(),
+    name, category, servings, cal, protein, carbs, fat,
+    ingredients: [...tempIngredients],
+    steps: [...tempSteps],
+    createdAt: editId ? (recipes.find(r=>r.id===parseInt(editId))||{}).createdAt : new Date().toISOString()
+  };
+
+  if (editId) {
+    const idx = recipes.findIndex(r => r.id === parseInt(editId));
+    if (idx > -1) recipes[idx] = recipe; else recipes.unshift(recipe);
+  } else {
+    recipes.unshift(recipe);
+  }
+
+  saveRecipes(recipes);
+  clearRecipeForm();
+  renderRecipeList();
+
+  const btn = document.querySelector('[onclick="saveRecipe()"]');
+  if (btn) { btn.textContent = '✓ Saved!'; setTimeout(() => { btn.innerHTML = '&#128190; Save Recipe'; }, 1200); }
+}
+
+function clearRecipeForm() {
+  ['recipe-name','recipe-category','recipe-cal','recipe-protein','recipe-carbs','recipe-fat','recipe-edit-id'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.getElementById('recipe-servings').value = '1';
+  document.getElementById('recipe-form-title').textContent = 'New Recipe';
+  tempIngredients = []; tempSteps = [];
+  renderIngBuilderList(); renderStepsBuilderList();
+}
+
+function editRecipe(id) {
+  const r = getRecipes().find(r => r.id === id);
+  if (!r) return;
+  document.getElementById('recipe-edit-id').value   = r.id;
+  document.getElementById('recipe-name').value      = r.name;
+  document.getElementById('recipe-category').value  = r.category || '';
+  document.getElementById('recipe-servings').value  = r.servings || 1;
+  document.getElementById('recipe-cal').value       = r.cal || '';
+  document.getElementById('recipe-protein').value   = r.protein || '';
+  document.getElementById('recipe-carbs').value     = r.carbs || '';
+  document.getElementById('recipe-fat').value       = r.fat || '';
+  document.getElementById('recipe-form-title').textContent = 'Edit Recipe';
+  tempIngredients = [...(r.ingredients||[])];
+  tempSteps = [...(r.steps||[])];
+  renderIngBuilderList(); renderStepsBuilderList();
+  // Scroll form into view
+  document.getElementById('recipe-name').scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+function deleteRecipe(id) {
+  if (!confirm('Delete this recipe?')) return;
+  saveRecipes(getRecipes().filter(r => r.id !== id));
+  renderRecipeList();
+}
+
+function logRecipeAsFood(r) {
+  // Switch to food log sub-tab and pre-fill
+  switchFoodTab('log', document.getElementById('stab-log'));
+  document.getElementById('food-name').value    = r.name;
+  document.getElementById('food-cal').value     = r.cal;
+  document.getElementById('food-protein').value = r.protein;
+  document.getElementById('food-carbs').value   = r.carbs;
+  document.getElementById('food-fat').value     = r.fat;
+  document.getElementById('food-meal').focus();
+}
+
+let openRecipeId = null;
+let mealView = 'grid';
+let mealCatFilter = 'all';
+
+function setMealView(v, btn) {
+  mealView = v;
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderRecipeList();
+}
+
+function setMealCat(cat, btn) {
+  mealCatFilter = cat;
+  document.querySelectorAll('.meal-cat-pill').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderRecipeList();
+}
+
+function openMealForm(id) {
+  if (id) editRecipe(id);
+  else clearRecipeForm();
+  document.getElementById('meal-modal-overlay').classList.add('open');
+}
+
+function closeMealForm(e) {
+  if (e && e.target !== document.getElementById('meal-modal-overlay') && e.type === 'click') return;
+  document.getElementById('meal-modal-overlay').classList.remove('open');
+}
+
+function toggleRecipeDetail(id) {
+  openRecipeId = openRecipeId === id ? null : id;
+  renderRecipeList();
+}
+
+function renderRecipeList() {
+  const el = document.getElementById('recipe-list');
+  if (!el) return;
+
+  const q = (document.getElementById('recipe-search')||{}).value || '';
+  let recipes = getRecipes();
+
+  // Render category pills
+  const catsEl = document.getElementById('meal-cats');
+  if (catsEl) {
+    const cats = [...new Set(recipes.map(r => r.category).filter(Boolean))];
+    catsEl.innerHTML = `<button class="meal-cat-pill ${mealCatFilter==='all'?'active':''}" onclick="setMealCat('all',this)">All</button>` +
+      cats.map(c => `<button class="meal-cat-pill ${mealCatFilter===c?'active':''}" onclick="setMealCat('${c.replace(/'/g,"\\'")}',this)">${c}</button>`).join('');
+  }
+
+  // Filter
+  if (q) recipes = recipes.filter(r => r.name.toLowerCase().includes(q.toLowerCase()) || (r.category||'').toLowerCase().includes(q.toLowerCase()));
+  if (mealCatFilter !== 'all') recipes = recipes.filter(r => r.category === mealCatFilter);
+
+  if (!recipes.length) {
+    el.innerHTML = '<div class="empty-state" style="padding:2rem">No meals found.<br>Click <strong>+ New Meal</strong> to create one!</div>';
+    renderMealPlanner();
+    return;
+  }
+
+  const actionsHTML = (r) => `
+    <button class="log-btn" onclick='logRecipeAsFood(${JSON.stringify(r).replace(/'/g,"&#39;")})'>&#128203; Log</button>
+    <button onclick="openMealForm(${r.id})">&#9998;</button>
+    <button onclick="deleteRecipe(${r.id})">&#10005;</button>`;
+
+  if (mealView === 'grid') {
+    el.innerHTML = `<div class="meal-grid">` + recipes.map((r,i) => `
+      <div class="meal-grid-card" style="animation-delay:${i*0.04}s">
+        <div class="meal-grid-card-color"></div>
+        <div class="meal-grid-card-body">
+          <div class="meal-grid-card-name">${r.name}</div>
+          <div class="meal-grid-card-cat">${r.category||'Uncategorised'} &middot; ${r.servings} serving${r.servings>1?'s':''}</div>
+          <div class="meal-grid-macros">
+            <span class="meal-macro-badge">${r.cal} kcal</span>
+            <span class="meal-macro-badge">P ${r.protein}g</span>
+            <span class="meal-macro-badge">C ${r.carbs}g</span>
+            <span class="meal-macro-badge">F ${r.fat}g</span>
+          </div>
+        </div>
+        <div class="meal-grid-card-actions">${actionsHTML(r)}</div>
+      </div>`).join('') + `</div>`;
+  } else {
+    // List view with expandable detail
+    el.innerHTML = `<table class="meal-list-table">
+      <thead><tr>
+        <th>Name</th><th>Category</th><th>Cal</th><th>Protein</th><th>Carbs</th><th>Fat</th><th></th>
+      </tr></thead>
+      <tbody>` + recipes.map(r => {
+        const isOpen = openRecipeId === r.id;
+        const ingsHTML = (r.ingredients||[]).length ? `<div class="recipe-detail-section">Ingredients</div>${(r.ingredients).map(i=>`<div class="recipe-ing-item"><span style="color:var(--ink3)">•</span><span>${i.name}${i.qty?' — '+i.qty:''}</span></div>`).join('')}` : '';
+        const stepsHTML = (r.steps||[]).length ? `<div class="recipe-detail-section">Steps</div>${(r.steps).map((s,i)=>`<div class="recipe-step-item"><div class="recipe-step-num">${i+1}</div><span>${s.text}</span></div>`).join('')}` : '';
+        return `<tr class="meal-list-row" onclick="toggleRecipeDetail(${r.id})">
+          <td><div class="ml-name">${r.name}</div></td>
+          <td><div class="ml-cat">${r.category||'—'}</div></td>
+          <td>${r.cal}</td><td>${r.protein}g</td><td>${r.carbs}g</td><td>${r.fat}g</td>
+          <td onclick="event.stopPropagation()"><div class="meal-list-actions">${actionsHTML(r)}</div></td>
+        </tr>
+        ${isOpen && (ingsHTML||stepsHTML) ? `<tr><td colspan="7"><div class="recipe-detail open">${ingsHTML}${stepsHTML}</div></td></tr>` : ''}`;
+      }).join('') + `</tbody></table>`;
+  }
+
+  renderMealPlanner();
+}
+
+// ── MEAL PLANNER ─────────────────────────────────────────────
+function getMealPlan() {
+  try { return JSON.parse(localStorage.getItem('mealPlan') || '{}'); } catch { return {}; }
+}
+function saveMealPlan(p) { try { localStorage.setItem('mealPlan', JSON.stringify(p)); } catch {} }
+
+function renderMealPlanner() {
+  const grid = document.getElementById('meal-planner-grid');
+  if (!grid) return;
+  const plan = getMealPlan();
+  const recipes = getRecipes();
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today); d.setDate(today.getDate() + i); days.push(d);
+  }
+
+  grid.innerHTML = days.map(d => {
+    const key = dateKey(d);
+    const isToday = d.getTime() === today.getTime();
+    const planned = plan[key] || [];
+    const dayLabel = d.toLocaleDateString('en-US', { weekday: 'short' });
+    const dayNum   = d.getDate();
+
+    const chips = planned.map((name, idx) =>
+      `<div class="planner-meal-chip" title="${name}">
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:70px">${name}</span>
+        <span class="chip-del" onclick="removePlanMeal('${key}',${idx});event.stopPropagation()">✕</span>
+      </div>`).join('');
+
+    const opts = recipes.map(r => `<option value="${r.name}">${r.name}</option>`).join('');
+
+    return `<div class="planner-day ${isToday?'today':''}">
+      <div class="planner-day-label">${dayLabel}</div>
+      <div class="planner-day-date">${dayNum}</div>
+      ${chips}
+      <select class="planner-select" style="display:none" id="psel-${key}" onchange="addPlanMeal('${key}',this)">
+        <option value="">Pick meal…</option>${opts}
+      </select>
+      <button class="planner-add-btn" onclick="togglePlanSelect('${key}')">+ add</button>
+    </div>`;
+  }).join('');
+}
+
+function togglePlanSelect(key) {
+  const sel = document.getElementById('psel-' + key);
+  if (!sel) return;
+  sel.style.display = sel.style.display === 'none' ? 'block' : 'none';
+}
+
+function addPlanMeal(key, sel) {
+  if (!sel.value) return;
+  const plan = getMealPlan();
+  if (!plan[key]) plan[key] = [];
+  plan[key].push(sel.value);
+  saveMealPlan(plan);
+  sel.value = ''; sel.style.display = 'none';
+  renderMealPlanner();
+}
+
+function removePlanMeal(key, idx) {
+  const plan = getMealPlan();
+  if (plan[key]) { plan[key].splice(idx, 1); if (!plan[key].length) delete plan[key]; }
+  saveMealPlan(plan);
+  renderMealPlanner();
+}
+
 // ─── FOOD LIBRARY ─────────────────────────────────────────────
 function getFoodLibrary() {
   try { return JSON.parse(localStorage.getItem('foodLibrary') || '[]'); } catch { return []; }
@@ -1054,6 +1691,7 @@ function deleteFoodFromLibrary(id) {
   saveFoodLibrary(lib);
   renderLibrary();
   renderTodos();
+  renderRecipeList();
 }
 
 function fillFromLibrary(item) {
@@ -1751,6 +2389,7 @@ function renderAll() {
   renderWeekly();
   renderLibrary();
   renderTodos();
+  renderRecipeList();
 }
 
 // ─── INIT ─────────────────────────────────────────────────────
