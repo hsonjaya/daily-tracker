@@ -943,22 +943,7 @@ textarea:focus { border-color: var(--ink); }
 </head>
 <body>
 
-<!-- AUTH SCREEN -->
-<div id="auth-screen" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);position:relative;z-index:10;">
-  <div style="text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:3rem 2.5rem;max-width:380px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,0.08);">
-    <h1 style="font-family:'DM Serif Display',serif;font-size:2.2rem;line-height:1;margin-bottom:0.3rem;">Daily <em style="font-style:italic;color:var(--accent)">Tracker</em></h1>
-    <p style="font-size:0.72rem;color:var(--ink3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:2rem;">your personal log</p>
-    <button id="signin-btn"
-      style="display:inline-flex;align-items:center;gap:0.7rem;background:var(--ink);color:var(--bg);border:none;border-radius:6px;padding:0.75rem 1.5rem;font-family:'DM Mono',monospace;font-size:0.8rem;letter-spacing:0.05em;cursor:pointer;transition:background 0.15s;width:100%;justify-content:center;">
-      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20H24v8h11.3C33.6 32.6 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.6-8 19.6-20 0-1.3-.1-2.7-.4-4z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.1 19 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5.1l-6.2-5.2C29.4 35.5 26.8 36 24 36c-5.2 0-9.6-3.4-11.3-8.1l-6.6 5.1C9.7 39.7 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20H24v8h11.3c-.9 2.4-2.5 4.4-4.7 5.7l6.2 5.2C40.8 35.6 44 30.2 44 24c0-1.3-.1-2.7-.4-4z"/></svg>
-      Sign in with Google
-    </button>
-    <p style="font-size:0.62rem;color:var(--ink3);margin-top:1.2rem;line-height:1.6;">Your data is private and synced<br>securely to your Google account.</p>
-  </div>
-</div>
 
-<!-- MAIN APP (hidden until signed in) -->
-<div id="app-wrapper" style="display:none;">
 <div class="app">
 
   <header>
@@ -968,11 +953,6 @@ textarea:focus { border-color: var(--ink); }
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.4rem">
       <div id="sync-indicator" style="font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:#3abf72;opacity:0;transition:opacity 0.4s;min-height:1em">✓ saved</div>
-      <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem;justify-content:flex-end;">
-        <img id="user-avatar" src="" alt="" style="display:none;width:24px;height:24px;border-radius:50%;object-fit:cover;border:1.5px solid var(--border);" />
-        <span id="user-name" style="font-size:0.62rem;color:var(--ink3);letter-spacing:0.06em;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-        <button id="signout-btn" style="background:none;border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--ink3);cursor:pointer;transition:all 0.15s;letter-spacing:0.06em;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink3)'">sign out</button>
-      </div>
       <div class="date-nav">
         <button onclick="changeDay(-1)">‹</button>
         <div class="current-date" id="currentDateDisplay"></div>
@@ -1521,9 +1501,6 @@ import { getFirestore, doc, getDoc, setDoc,
          collection, getDocs, addDoc, updateDoc,
          deleteDoc, onSnapshot, writeBatch, query,
          orderBy, serverTimestamp }                 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getAuth, GoogleAuthProvider,
-         signInWithPopup, signOut,
-         onAuthStateChanged }                       from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey:            "AIzaSyBeReQ2PUHr7QzCYh0CWoOO47MGp99vkmA",
@@ -1536,64 +1513,7 @@ const firebaseConfig = {
 
 const fbApp    = initializeApp(firebaseConfig);
 const db       = getFirestore(fbApp);
-const auth     = getAuth(fbApp);
-const provider = new GoogleAuthProvider();
-
-let USER = null; // set after sign-in
-
-// --- AUTH ---
-function showApp(user) {
-  USER = user.uid;
-  document.getElementById('auth-screen').style.display  = 'none';
-  document.getElementById('app-wrapper').style.display  = 'block';
-  const avatarEl = document.getElementById('user-avatar');
-  if (avatarEl) {
-    avatarEl.src   = user.photoURL || '';
-    avatarEl.style.display = user.photoURL ? 'inline-block' : 'none';
-  }
-  const nameEl = document.getElementById('user-name');
-  if (nameEl) nameEl.textContent = user.displayName || user.email || '';
-  _cache = {}; _todosCache = null; _recipesCache = null;
-  _rbRecipesCache = null; _libraryCache = null; _mealPlanCache = null;
-  updateDateDisplay();
-  renderAll();
-}
-
-function hideApp() {
-  USER = null;
-  document.getElementById('auth-screen').style.display  = 'flex';
-  document.getElementById('app-wrapper').style.display  = 'none';
-}
-
-async function googleSignIn() {
-  const btn = document.getElementById('signin-btn');
-  if (btn) { btn.textContent = 'Signing in...'; btn.disabled = true; }
-  try {
-    await signInWithPopup(auth, provider);
-  } catch(e) {
-    console.error('Sign-in error', e);
-    if (btn) { btn.textContent = 'Sign in with Google'; btn.disabled = false; }
-    alert('Sign-in failed: ' + (e.message || e));
-  }
-}
-
-async function googleSignOut() {
-  if (!confirm('Sign out?')) return;
-  await signOut(auth);
-}
-
-onAuthStateChanged(auth, user => {
-  if (user) showApp(user);
-  else hideApp();
-});
-
-// Wire up auth buttons via addEventListener (required for type="module")
-document.addEventListener('DOMContentLoaded', () => {
-  const signinBtn  = document.getElementById('signin-btn');
-  const signoutBtn = document.getElementById('signout-btn');
-  if (signinBtn)  signinBtn.addEventListener('click',  googleSignIn);
-  if (signoutBtn) signoutBtn.addEventListener('click', googleSignOut);
-});
+const USER = "default"; // single-user, no auth
 
 
 // ─── SYNC STATUS ─────────────────────────────────────────────
@@ -3161,7 +3081,6 @@ renderAll();
 
 // ─── EXPOSE TO GLOBAL SCOPE (required for inline onclick handlers with type="module") ──
 Object.assign(window, {
-  googleSignIn, googleSignOut,
   changeDay, switchTab, switchFoodTab,
   addFood, deleteFood,
   addExpense, deleteExpense,
@@ -3182,6 +3101,5 @@ Object.assign(window, {
   renderRecipeList, renderRecipeBook, renderAll
 });
 </script>
-</div><!-- /app-wrapper -->
 </body>
 </html>
