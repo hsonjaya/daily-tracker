@@ -942,6 +942,23 @@ textarea:focus { border-color: var(--ink); }
 </style>
 </head>
 <body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);position:relative;z-index:10;">
+  <div style="text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:3rem 2.5rem;max-width:380px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,0.08);">
+    <h1 style="font-family:'DM Serif Display',serif;font-size:2.2rem;line-height:1;margin-bottom:0.3rem;">Daily <em style="font-style:italic;color:var(--accent)">Tracker</em></h1>
+    <p style="font-size:0.72rem;color:var(--ink3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:2rem;">your personal log</p>
+    <button id="signin-btn" onclick="googleSignIn()"
+      style="display:inline-flex;align-items:center;gap:0.7rem;background:var(--ink);color:var(--bg);border:none;border-radius:6px;padding:0.75rem 1.5rem;font-family:'DM Mono',monospace;font-size:0.8rem;letter-spacing:0.05em;cursor:pointer;transition:background 0.15s;width:100%;justify-content:center;">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20H24v8h11.3C33.6 32.6 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.6-8 19.6-20 0-1.3-.1-2.7-.4-4z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.1 19 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5.1l-6.2-5.2C29.4 35.5 26.8 36 24 36c-5.2 0-9.6-3.4-11.3-8.1l-6.6 5.1C9.7 39.7 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20H24v8h11.3c-.9 2.4-2.5 4.4-4.7 5.7l6.2 5.2C40.8 35.6 44 30.2 44 24c0-1.3-.1-2.7-.4-4z"/></svg>
+      Sign in with Google
+    </button>
+    <p style="font-size:0.62rem;color:var(--ink3);margin-top:1.2rem;line-height:1.6;">Your data is private and synced<br>securely to your Google account.</p>
+  </div>
+</div>
+
+<!-- MAIN APP (hidden until signed in) -->
+<div id="app-wrapper" style="display:none;">
 <div class="app">
 
   <header>
@@ -949,10 +966,18 @@ textarea:focus { border-color: var(--ink); }
       <h1>Daily <em>Tracker</em></h1>
       <div class="date-display">your personal log</div>
     </div>
-    <div class="date-nav">
-      <button onclick="changeDay(-1)">‹</button>
-      <div class="current-date" id="currentDateDisplay"></div>
-      <button onclick="changeDay(1)">›</button>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.4rem">
+      <div id="sync-indicator" style="font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:#3abf72;opacity:0;transition:opacity 0.4s;min-height:1em">✓ saved</div>
+      <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem;justify-content:flex-end;">
+        <img id="user-avatar" src="" alt="" style="display:none;width:24px;height:24px;border-radius:50%;object-fit:cover;border:1.5px solid var(--border);" />
+        <span id="user-name" style="font-size:0.62rem;color:var(--ink3);letter-spacing:0.06em;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+        <button onclick="googleSignOut()" style="background:none;border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--ink3);cursor:pointer;transition:all 0.15s;letter-spacing:0.06em;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink3)'">sign out</button>
+      </div>
+      <div class="date-nav">
+        <button onclick="changeDay(-1)">‹</button>
+        <div class="current-date" id="currentDateDisplay"></div>
+        <button onclick="changeDay(1)">›</button>
+      </div>
     </div>
   </header>
 
@@ -1489,7 +1514,98 @@ textarea:focus { border-color: var(--ink); }
 
 </div>
 
-<script>
+<script type="module">
+// ─── FIREBASE SETUP ──────────────────────────────────────────
+import { initializeApp }                            from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc,
+         collection, getDocs, addDoc, updateDoc,
+         deleteDoc, onSnapshot, writeBatch, query,
+         orderBy, serverTimestamp }                 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider,
+         signInWithPopup, signOut,
+         onAuthStateChanged }                       from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyBeReQ2PUHr7QzCYh0CWoOO47MGp99vkmA",
+  authDomain:        "daily-tracker-d6e6d.firebaseapp.com",
+  projectId:         "daily-tracker-d6e6d",
+  storageBucket:     "daily-tracker-d6e6d.firebasestorage.app",
+  messagingSenderId: "966708478409",
+  appId:             "1:966708478409:web:320fa3dc6edfd21bcde818"
+};
+
+const fbApp    = initializeApp(firebaseConfig);
+const db       = getFirestore(fbApp);
+const auth     = getAuth(fbApp);
+const provider = new GoogleAuthProvider();
+
+let USER = null; // set after sign-in
+
+// --- AUTH ---
+function showApp(user) {
+  USER = user.uid;
+  document.getElementById('auth-screen').style.display  = 'none';
+  document.getElementById('app-wrapper').style.display  = 'block';
+  const avatarEl = document.getElementById('user-avatar');
+  if (avatarEl) {
+    avatarEl.src   = user.photoURL || '';
+    avatarEl.style.display = user.photoURL ? 'inline-block' : 'none';
+  }
+  const nameEl = document.getElementById('user-name');
+  if (nameEl) nameEl.textContent = user.displayName || user.email || '';
+  _cache = {}; _todosCache = null; _recipesCache = null;
+  _rbRecipesCache = null; _libraryCache = null; _mealPlanCache = null;
+  updateDateDisplay();
+  renderAll();
+}
+
+function hideApp() {
+  USER = null;
+  document.getElementById('auth-screen').style.display  = 'flex';
+  document.getElementById('app-wrapper').style.display  = 'none';
+}
+
+async function googleSignIn() {
+  const btn = document.getElementById('signin-btn');
+  if (btn) { btn.textContent = 'Signing in...'; btn.disabled = true; }
+  try {
+    await signInWithPopup(auth, provider);
+  } catch(e) {
+    console.error('Sign-in error', e);
+    if (btn) { btn.textContent = 'Sign in with Google'; btn.disabled = false; }
+    alert('Sign-in failed: ' + (e.message || e));
+  }
+}
+
+async function googleSignOut() {
+  if (!confirm('Sign out?')) return;
+  await signOut(auth);
+}
+
+onAuthStateChanged(auth, user => {
+  if (user) showApp(user);
+  else hideApp();
+});
+
+
+// ─── SYNC STATUS ─────────────────────────────────────────────
+function showSync(msg, color = '#3abf72') {
+  let el = document.getElementById('sync-indicator');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = color;
+  el.style.opacity = '1';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.opacity = '0'; }, 2000);
+}
+
+// ─── LOCAL CACHE (keeps UI snappy) ───────────────────────────
+let _cache = {};           // dateKey → day object
+let _todosCache    = null;
+let _recipesCache  = null;
+let _rbRecipesCache = null;
+let _libraryCache  = null;
+
 // ─── STATE ───────────────────────────────────────────────────
 let currentDate = new Date();
 currentDate.setHours(0,0,0,0);
@@ -1498,23 +1614,137 @@ function dateKey(d) {
   return d.toISOString().slice(0,10);
 }
 
-function getData() {
-  try { return JSON.parse(localStorage.getItem('dailyTracker') || '{}'); } catch { return {}; }
-}
-function saveData(d) {
-  try { localStorage.setItem('dailyTracker', JSON.stringify(d)); } catch {}
+// ── Day document helpers ──────────────────────────────────────
+function emptyDay() {
+  return { food:[], expenses:[], sport:[], sleep:null, habits:{}, habitDefs:[], notes:'' };
 }
 
-function getDay(key) {
-  const d = getData();
-  if (!d[key]) d[key] = { food:[], expenses:[], sport:[], sleep:null, habits:{}, habitDefs:[], notes:'' };
-  return d[key];
+async function getDay(key) {
+  if (_cache[key]) return JSON.parse(JSON.stringify(_cache[key]));
+  try {
+    const snap = await getDoc(doc(db, "users", USER, "days", key));
+    const data = snap.exists() ? snap.data() : emptyDay();
+    // Firestore stores arrays fine; ensure defaults
+    if (!data.food)       data.food = [];
+    if (!data.expenses)   data.expenses = [];
+    if (!data.sport)      data.sport = [];
+    if (!data.habits)     data.habits = {};
+    if (!data.habitDefs)  data.habitDefs = [];
+    if (data.sleep === undefined) data.sleep = null;
+    if (!data.notes)      data.notes = '';
+    _cache[key] = JSON.parse(JSON.stringify(data));
+    return data;
+  } catch(e) {
+    console.error('getDay error', e);
+    return emptyDay();
+  }
 }
 
-function setDay(key, val) {
-  const d = getData();
-  d[key] = val;
-  saveData(d);
+async function setDay(key, val) {
+  _cache[key] = JSON.parse(JSON.stringify(val));
+  showSync('saving…', '#e8b83a');
+  try {
+    await setDoc(doc(db, "users", USER, "days", key), val);
+    showSync('✓ saved');
+  } catch(e) {
+    console.error('setDay error', e);
+    showSync('⚠ save failed', '#e8623a');
+  }
+}
+
+// Backwards-compat shim for synchronous callers (weekly chart etc.)
+// We pre-load the cache for the 7-day window on each renderWeekly call
+function getDaySync(key) {
+  return _cache[key] ? JSON.parse(JSON.stringify(_cache[key])) : emptyDay();
+}
+
+async function preloadWeekCache() {
+  const days = getLast7Days();
+  await Promise.all(days.map(d => getDay(dateKey(d))));
+}
+
+// ── Todos ─────────────────────────────────────────────────────
+async function getTodos() {
+  if (_todosCache) return JSON.parse(JSON.stringify(_todosCache));
+  try {
+    const snap = await getDocs(collection(db, "users", USER, "todos"));
+    const todos = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+    todos.sort((a,b) => (b.id||0) - (a.id||0));
+    _todosCache = todos;
+    return JSON.parse(JSON.stringify(todos));
+  } catch(e) {
+    console.error('getTodos error', e);
+    return [];
+  }
+}
+
+async function saveTodos(todos) {
+  _todosCache = JSON.parse(JSON.stringify(todos));
+  // We do individual doc writes; this is called after local mutation
+  // (actual Firestore writes happen in add/toggle/delete functions)
+}
+
+// ── Recipes (Meals) ────────────────────────────────────────────
+async function getRecipes() {
+  if (_recipesCache) return JSON.parse(JSON.stringify(_recipesCache));
+  try {
+    const snap = await getDocs(collection(db, "users", USER, "recipes"));
+    const recipes = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+    recipes.sort((a,b) => (b.id||0) - (a.id||0));
+    _recipesCache = recipes;
+    return JSON.parse(JSON.stringify(recipes));
+  } catch(e) {
+    console.error('getRecipes error', e);
+    return [];
+  }
+}
+
+async function saveRecipesToFS(recipes) {
+  _recipesCache = JSON.parse(JSON.stringify(recipes));
+}
+
+// ── Recipe Book ───────────────────────────────────────────────
+async function getRbRecipes() {
+  if (_rbRecipesCache) return JSON.parse(JSON.stringify(_rbRecipesCache));
+  try {
+    const snap = await getDocs(collection(db, "users", USER, "rbRecipes"));
+    const recs = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+    recs.sort((a,b) => (b.id||0) - (a.id||0));
+    _rbRecipesCache = recs;
+    return JSON.parse(JSON.stringify(recs));
+  } catch(e) {
+    console.error('getRbRecipes error', e);
+    return [];
+  }
+}
+
+async function saveRbRecipesToFS(recipes) {
+  _rbRecipesCache = JSON.parse(JSON.stringify(recipes));
+}
+
+// ── Food Library ──────────────────────────────────────────────
+async function getFoodLibrary() {
+  if (_libraryCache) return JSON.parse(JSON.stringify(_libraryCache));
+  try {
+    const snap = await getDoc(doc(db, "users", USER, "meta", "foodLibrary"));
+    const lib = snap.exists() ? (snap.data().items || []) : [];
+    _libraryCache = lib;
+    return JSON.parse(JSON.stringify(lib));
+  } catch(e) {
+    console.error('getFoodLibrary error', e);
+    return [];
+  }
+}
+
+async function saveFoodLibrary(lib) {
+  _libraryCache = JSON.parse(JSON.stringify(lib));
+  showSync('saving…', '#e8b83a');
+  try {
+    await setDoc(doc(db, "users", USER, "meta", "foodLibrary"), { items: lib });
+    showSync('✓ saved');
+  } catch(e) {
+    showSync('⚠ save failed', '#e8623a');
+  }
 }
 
 // ─── DATE NAV ────────────────────────────────────────────────
@@ -1555,12 +1785,7 @@ function switchFoodTab(name, btn) {
 }
 
 // ─── RECIPE STORE ─────────────────────────────────────────────
-function getRecipes() {
-  try { return JSON.parse(localStorage.getItem('recipes') || '[]'); } catch { return []; }
-}
-function saveRecipes(r) {
-  try { localStorage.setItem('recipes', JSON.stringify(r)); } catch {}
-}
+// getRecipes() and saveRecipesToFS() are defined above in Firebase section
 
 // Temp ingredient / step builders
 let tempIngredients = [];
@@ -1615,7 +1840,7 @@ function renderStepsBuilderList() {
     </div>`).join('');
 }
 
-function saveRecipe() {
+async function saveRecipe() {
   const name     = document.getElementById('recipe-name').value.trim();
   const category = document.getElementById('recipe-category').value.trim();
   const servings = parseInt(document.getElementById('recipe-servings').value) || 1;
@@ -1627,7 +1852,7 @@ function saveRecipe() {
 
   if (!name) { alert('Please enter a recipe name'); return; }
 
-  const recipes = getRecipes();
+  const recipes = await getRecipes();
   const recipe = {
     id: editId ? parseInt(editId) : Date.now(),
     name, category, servings, cal, protein, carbs, fat,
@@ -1636,14 +1861,26 @@ function saveRecipe() {
     createdAt: editId ? (recipes.find(r=>r.id===parseInt(editId))||{}).createdAt : new Date().toISOString()
   };
 
-  if (editId) {
-    const idx = recipes.findIndex(r => r.id === parseInt(editId));
-    if (idx > -1) recipes[idx] = recipe; else recipes.unshift(recipe);
-  } else {
-    recipes.unshift(recipe);
+  showSync('saving…', '#e8b83a');
+  try {
+    if (editId) {
+      const existing = recipes.find(r => r.id === parseInt(editId));
+      if (existing && existing.firestoreId) {
+        await updateDoc(doc(db, "users", USER, "recipes", existing.firestoreId), recipe);
+      } else {
+        await addDoc(collection(db, "users", USER, "recipes"), recipe);
+      }
+    } else {
+      await addDoc(collection(db, "users", USER, "recipes"), recipe);
+    }
+    _recipesCache = null; // invalidate cache
+    showSync('✓ saved');
+  } catch(e) {
+    console.error('saveRecipe error', e);
+    showSync('⚠ save failed', '#e8623a');
+    return;
   }
 
-  saveRecipes(recipes);
   clearRecipeForm();
   renderRecipeList();
 
@@ -1661,8 +1898,9 @@ function clearRecipeForm() {
   renderIngBuilderList(); renderStepsBuilderList();
 }
 
-function editRecipe(id) {
-  const r = getRecipes().find(r => r.id === id);
+async function editRecipe(id) {
+  const recipes = await getRecipes();
+  const r = recipes.find(r => r.id === id);
   if (!r) return;
   document.getElementById('recipe-edit-id').value   = r.id;
   document.getElementById('recipe-name').value      = r.name;
@@ -1676,13 +1914,21 @@ function editRecipe(id) {
   tempIngredients = [...(r.ingredients||[])];
   tempSteps = [...(r.steps||[])];
   renderIngBuilderList(); renderStepsBuilderList();
-  // Scroll form into view
   document.getElementById('recipe-name').scrollIntoView({ behavior:'smooth', block:'center' });
 }
 
-function deleteRecipe(id) {
+async function deleteRecipe(id) {
   if (!confirm('Delete this recipe?')) return;
-  saveRecipes(getRecipes().filter(r => r.id !== id));
+  const recipes = await getRecipes();
+  const r = recipes.find(r => r.id === id);
+  if (r && r.firestoreId) {
+    showSync('saving…', '#e8b83a');
+    try {
+      await deleteDoc(doc(db, "users", USER, "recipes", r.firestoreId));
+      _recipesCache = null;
+      showSync('✓ deleted');
+    } catch(e) { showSync('⚠ failed', '#e8623a'); return; }
+  }
   renderRecipeList();
 }
 
@@ -1731,12 +1977,12 @@ function toggleRecipeDetail(id) {
   renderRecipeList();
 }
 
-function renderRecipeList() {
+async function renderRecipeList() {
   const el = document.getElementById('recipe-list');
   if (!el) return;
 
   const q = (document.getElementById('recipe-search')||{}).value || '';
-  let recipes = getRecipes();
+  let recipes = await getRecipes();
 
   // Render category pills
   const catsEl = document.getElementById('meal-cats');
@@ -1801,16 +2047,32 @@ function renderRecipeList() {
 }
 
 // ── MEAL PLANNER ─────────────────────────────────────────────
-function getMealPlan() {
-  try { return JSON.parse(localStorage.getItem('mealPlan') || '{}'); } catch { return {}; }
-}
-function saveMealPlan(p) { try { localStorage.setItem('mealPlan', JSON.stringify(p)); } catch {} }
+let _mealPlanCache = null;
 
-function renderMealPlanner() {
+async function getMealPlan() {
+  if (_mealPlanCache) return JSON.parse(JSON.stringify(_mealPlanCache));
+  try {
+    const snap = await getDoc(doc(db, "users", USER, "meta", "mealPlan"));
+    const plan = snap.exists() ? (snap.data().plan || {}) : {};
+    _mealPlanCache = plan;
+    return JSON.parse(JSON.stringify(plan));
+  } catch(e) { return {}; }
+}
+
+async function saveMealPlan(p) {
+  _mealPlanCache = JSON.parse(JSON.stringify(p));
+  showSync('saving…', '#e8b83a');
+  try {
+    await setDoc(doc(db, "users", USER, "meta", "mealPlan"), { plan: p });
+    showSync('✓ saved');
+  } catch(e) { showSync('⚠ failed', '#e8623a'); }
+}
+
+async function renderMealPlanner() {
   const grid = document.getElementById('meal-planner-grid');
   if (!grid) return;
-  const plan = getMealPlan();
-  const recipes = getRecipes();
+  const plan = await getMealPlan();
+  const recipes = await getRecipes();
   const today = new Date(); today.setHours(0,0,0,0);
 
   const days = [];
@@ -1851,39 +2113,34 @@ function togglePlanSelect(key) {
   sel.style.display = sel.style.display === 'none' ? 'block' : 'none';
 }
 
-function addPlanMeal(key, sel) {
+async function addPlanMeal(key, sel) {
   if (!sel.value) return;
-  const plan = getMealPlan();
+  const plan = await getMealPlan();
   if (!plan[key]) plan[key] = [];
   plan[key].push(sel.value);
-  saveMealPlan(plan);
+  await saveMealPlan(plan);
   sel.value = ''; sel.style.display = 'none';
   renderMealPlanner();
 }
 
-function removePlanMeal(key, idx) {
-  const plan = getMealPlan();
+async function removePlanMeal(key, idx) {
+  const plan = await getMealPlan();
   if (plan[key]) { plan[key].splice(idx, 1); if (!plan[key].length) delete plan[key]; }
-  saveMealPlan(plan);
+  await saveMealPlan(plan);
   renderMealPlanner();
 }
 
 // ─── FOOD LIBRARY ─────────────────────────────────────────────
-function getFoodLibrary() {
-  try { return JSON.parse(localStorage.getItem('foodLibrary') || '[]'); } catch { return []; }
-}
-function saveFoodLibrary(lib) {
-  try { localStorage.setItem('foodLibrary', JSON.stringify(lib)); } catch {}
-}
+// getFoodLibrary() and saveFoodLibrary() are defined above in Firebase section
 
-function saveToLibrary() {
+async function saveToLibrary() {
   const name = document.getElementById('food-name').value.trim();
   const cal = parseFloat(document.getElementById('food-cal').value) || 0;
   const protein = parseFloat(document.getElementById('food-protein').value) || 0;
   const carbs = parseFloat(document.getElementById('food-carbs').value) || 0;
   const fat = parseFloat(document.getElementById('food-fat').value) || 0;
   if (!name) { alert('Please enter a food name first'); return; }
-  const lib = getFoodLibrary();
+  const lib = await getFoodLibrary();
   // Avoid duplicates by name (case-insensitive)
   if (lib.find(f => f.name.toLowerCase() === name.toLowerCase())) {
     if (!confirm(name + ' is already in your library. Update it?')) return;
@@ -1892,7 +2149,7 @@ function saveToLibrary() {
   } else {
     lib.unshift({ name, cal, protein, carbs, fat, id: Date.now() });
   }
-  saveFoodLibrary(lib);
+  await saveFoodLibrary(lib);
   renderLibrary();
   // Flash feedback
   const btn = event.target;
@@ -1900,13 +2157,10 @@ function saveToLibrary() {
   setTimeout(() => { btn.innerHTML = '&#128190; Save to Library'; }, 1200);
 }
 
-function deleteFoodFromLibrary(id) {
-  const lib = getFoodLibrary().filter(f => f.id !== id);
-  saveFoodLibrary(lib);
+async function deleteFoodFromLibrary(id) {
+  const lib = (await getFoodLibrary()).filter(f => f.id !== id);
+  await saveFoodLibrary(lib);
   renderLibrary();
-  renderTodos();
-  renderRecipeList();
-  renderRecipeBook();
 }
 
 function fillFromLibrary(item) {
@@ -1922,8 +2176,8 @@ function fillFromLibrary(item) {
   document.getElementById('food-meal').focus();
 }
 
-function renderLibrary() {
-  const lib = getFoodLibrary();
+async function renderLibrary() {
+  const lib = await getFoodLibrary();
   const el = document.getElementById('library-list');
   if (!el) return;
   if (!lib.length) {
@@ -1940,11 +2194,11 @@ function renderLibrary() {
     </div>`).join('');
 }
 
-function filterLibrary() {
+async function filterLibrary() {
   const q = document.getElementById('food-search').value.trim().toLowerCase();
   const dropdown = document.getElementById('food-dropdown');
   if (!q) { dropdown.style.display = 'none'; return; }
-  const lib = getFoodLibrary();
+  const lib = await getFoodLibrary();
   const matches = lib.filter(f => f.name.toLowerCase().includes(q));
   if (!matches.length) { dropdown.style.display = 'none'; return; }
   dropdown.style.display = 'block';
@@ -1963,7 +2217,7 @@ document.addEventListener('click', e => {
   }
 });
 
-function addFood() {
+async function addFood() {
   const name = document.getElementById('food-name').value.trim();
   const cal = parseFloat(document.getElementById('food-cal').value) || 0;
   const meal = document.getElementById('food-meal').value || 'Meal';
@@ -1972,25 +2226,25 @@ function addFood() {
   const fat = parseFloat(document.getElementById('food-fat').value) || 0;
   if (!name) return;
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
   day.food.push({ name, cal, meal, protein, carbs, fat, id: Date.now() });
-  setDay(key, day);
+  await setDay(key, day);
   ['food-name','food-cal','food-meal','food-protein','food-carbs','food-fat'].forEach(id => document.getElementById(id).value='');
   document.getElementById('food-search').value = '';
   renderFood(); renderDashboard();
 }
 
-function deleteFood(id) {
+async function deleteFood(id) {
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
   day.food = day.food.filter(f => f.id !== id);
-  setDay(key, day);
+  await setDay(key, day);
   renderFood(); renderDashboard();
 }
 
-function renderFood() {
+async function renderFood() {
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
   const list = document.getElementById('food-list');
   if (!day.food.length) { list.innerHTML = '<div class="empty-state">No food logged yet</div>'; }
   else list.innerHTML = day.food.map(f => `
@@ -2030,31 +2284,31 @@ function renderFoodChart(p,c,f) {
 }
 
 // ─── EXPENSES ─────────────────────────────────────────────────
-function addExpense() {
+async function addExpense() {
   const desc = document.getElementById('exp-desc').value.trim();
   const amount = parseFloat(document.getElementById('exp-amount').value) || 0;
   const cat = document.getElementById('exp-cat').value;
   if (!desc || !amount) return;
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
   day.expenses.push({ desc, amount, cat, id: Date.now() });
-  setDay(key, day);
+  await setDay(key, day);
   document.getElementById('exp-desc').value='';
   document.getElementById('exp-amount').value='';
   renderExpenses(); renderDashboard();
 }
 
-function deleteExpense(id) {
+async function deleteExpense(id) {
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
   day.expenses = day.expenses.filter(e => e.id !== id);
-  setDay(key, day);
+  await setDay(key, day);
   renderExpenses(); renderDashboard();
 }
 
-function renderExpenses() {
+async function renderExpenses() {
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
   const list = document.getElementById('exp-list');
   if (!day.expenses.length) { list.innerHTML = '<div class="empty-state">No expenses yet</div>'; }
   else list.innerHTML = day.expenses.map(e => `
@@ -2086,7 +2340,7 @@ function renderExpChart(expenses) {
 }
 
 // ─── SPORT ────────────────────────────────────────────────────
-function addSport() {
+async function addSport() {
   const name = document.getElementById('sport-name').value.trim();
   const dur = parseFloat(document.getElementById('sport-dur').value) || 0;
   const cal = parseFloat(document.getElementById('sport-cal').value) || 0;
@@ -2094,24 +2348,24 @@ function addSport() {
   const notes = document.getElementById('sport-notes').value;
   if (!name) return;
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
   day.sport.push({ name, dur, cal, intensity, notes, id: Date.now() });
-  setDay(key, day);
+  await setDay(key, day);
   ['sport-name','sport-dur','sport-cal','sport-notes'].forEach(id => document.getElementById(id).value='');
   renderSport(); renderDashboard();
 }
 
-function deleteSport(id) {
+async function deleteSport(id) {
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
   day.sport = day.sport.filter(s => s.id !== id);
-  setDay(key, day);
+  await setDay(key, day);
   renderSport(); renderDashboard();
 }
 
-function renderSport() {
+async function renderSport() {
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
   const list = document.getElementById('sport-list');
   if (!day.sport.length) { list.innerHTML = '<div class="empty-state">No exercise logged yet</div>'; }
   else list.innerHTML = day.sport.map(s => `
@@ -2144,14 +2398,14 @@ function renderSportChart(sport) {
 }
 
 // ─── SLEEP ────────────────────────────────────────────────────
-function saveSleep() {
+async function saveSleep() {
   const start = document.getElementById('sleep-start').value;
   const end = document.getElementById('sleep-end').value;
   const quality = parseInt(document.getElementById('sleep-quality').value);
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
   day.sleep = { start, end, quality };
-  setDay(key, day);
+  await setDay(key, day);
   renderSleep(); renderDashboard();
 }
 
@@ -2163,9 +2417,9 @@ function calcSleepHours(start, end) {
   return mins/60;
 }
 
-function renderSleep() {
+async function renderSleep() {
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
   const disp = document.getElementById('sleep-display');
   if (!day.sleep) {
     disp.innerHTML = '<div class="empty-state">No sleep logged for today</div>';
@@ -2195,20 +2449,18 @@ function renderSleep() {
   renderSleepChart();
 }
 
-function renderSleepChart() {
-  const ctx = document.getElementById('chartSleep');
-  if (!ctx) return;
-  const all = getData();
+async function renderSleepChart() {
+  await preloadWeekCache();
   const days = getLast7Days();
   const labels = days.map(d => d.toLocaleDateString('en-US',{weekday:'short'}));
   const vals = days.map(d => {
-    const day = all[dateKey(d)];
-    if (day && day.sleep) return parseFloat(calcSleepHours(day.sleep.start, day.sleep.end).toFixed(1));
+    const day = getDaySync(dateKey(d));
+    if (day && day.sleep && day.sleep.start && day.sleep.end) return parseFloat(calcSleepHours(day.sleep.start, day.sleep.end).toFixed(1));
     return null;
   });
+  const ctx = document.getElementById('chartSleep');
+  if (!ctx) return;
   if (chartSleep) chartSleep.destroy();
-  chartSleep = new Chart(ctx, {
-    type:'line',
     data:{ labels, datasets:[{ label:'Hours', data:vals, borderColor:'var(--sleep)', backgroundColor:'rgba(155,111,232,0.1)', fill:true, tension:0.4, pointBackgroundColor:'var(--sleep)', spanGaps:true }]},
     options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}}, scales:{ x:{ticks:{font:{family:'DM Mono',size:10},color:'#6b6154'},grid:{display:false}}, y:{min:0,max:12, ticks:{font:{family:'DM Mono',size:10},color:'#6b6154'}}}}
   });
@@ -2219,32 +2471,32 @@ function renderSleepChart() {
 }
 
 // ─── HABITS ───────────────────────────────────────────────────
-function addHabit() {
+async function addHabit() {
   const name = document.getElementById('new-habit').value.trim();
   if (!name) return;
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
   if (!day.habitDefs) day.habitDefs = [];
   const hid = 'h'+Date.now();
   day.habitDefs.push({ name, id: hid });
   if (!day.habits) day.habits = {};
   day.habits[hid] = false;
-  setDay(key, day);
+  await setDay(key, day);
   document.getElementById('new-habit').value='';
   renderHabits(); renderDashboard();
 }
 
-function toggleHabit(id) {
+async function toggleHabit(id) {
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
   day.habits[id] = !day.habits[id];
-  setDay(key, day);
+  await setDay(key, day);
   renderHabits(); renderDashboard();
 }
 
-function renderHabits() {
+async function renderHabits() {
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
   const grid = document.getElementById('habit-grid');
   if (!day.habitDefs || !day.habitDefs.length) {
     grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Add your first habit above</div>';
@@ -2282,18 +2534,18 @@ function renderHabitChart(day) {
 }
 
 // ─── NOTES ────────────────────────────────────────────────────
-function saveNotes() {
+async function saveNotes() {
   const text = document.getElementById('notes-text').value;
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
   day.notes = text;
-  setDay(key, day);
+  await setDay(key, day);
   renderNotes();
 }
 
-function renderNotes() {
+async function renderNotes() {
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
   const el = document.getElementById('notes-text');
   if (el) el.value = day.notes || '';
   const disp = document.getElementById('saved-note-display');
@@ -2307,9 +2559,9 @@ function renderNotes() {
 function escHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ─── DASHBOARD ────────────────────────────────────────────────
-function renderDashboard() {
+async function renderDashboard() {
   const key = dateKey(currentDate);
-  const day = getDay(key);
+  const day = await getDay(key);
 
   // Calories
   const cal = Math.round(day.food.reduce((a,f)=>a+f.cal,0));
@@ -2378,15 +2630,15 @@ function getLast7Days() {
   return days;
 }
 
-function renderWeekly() {
-  const all = getData();
+async function renderWeekly() {
+  await preloadWeekCache();
   const days = getLast7Days();
   const labels = days.map(d => d.toLocaleDateString('en-US',{weekday:'short'}));
 
-  const cals = days.map(d => { const day=all[dateKey(d)]; return day ? Math.round(day.food.reduce((a,f)=>a+f.cal,0)) : 0; });
-  const exps = days.map(d => { const day=all[dateKey(d)]; return day ? Math.round(day.expenses.reduce((a,e)=>a+e.amount,0)) : 0; });
-  const sports = days.map(d => { const day=all[dateKey(d)]; return day ? day.sport.reduce((a,s)=>a+s.dur,0) : 0; });
-  const sleeps = days.map(d => { const day=all[dateKey(d)]; return (day && day.sleep) ? parseFloat(calcSleepHours(day.sleep.start,day.sleep.end).toFixed(1)) : null; });
+  const cals   = days.map(d => { const day=getDaySync(dateKey(d)); return day ? Math.round((day.food||[]).reduce((a,f)=>a+f.cal,0)) : 0; });
+  const exps   = days.map(d => { const day=getDaySync(dateKey(d)); return day ? Math.round((day.expenses||[]).reduce((a,e)=>a+e.amount,0)) : 0; });
+  const sports = days.map(d => { const day=getDaySync(dateKey(d)); return day ? (day.sport||[]).reduce((a,s)=>a+s.dur,0) : 0; });
+  const sleeps = days.map(d => { const day=getDaySync(dateKey(d)); return (day && day.sleep && day.sleep.start && day.sleep.end) ? parseFloat(calcSleepHours(day.sleep.start,day.sleep.end).toFixed(1)) : null; });
 
   const mkBar = (id, vals, color, label, ref) => {
     const ctx = document.getElementById(id); if(!ctx) return;
@@ -2417,81 +2669,94 @@ function renderWeekly() {
 // ─── TO-DO ────────────────────────────────────────────────────
 let todoFilters = { daily: 'all', backlog: 'all' };
 
-function getTodos() {
-  try { return JSON.parse(localStorage.getItem('todos') || '[]'); } catch { return []; }
-}
-function saveTodos(todos) {
-  try { localStorage.setItem('todos', JSON.stringify(todos)); } catch {}
-}
+// getTodos() and saveTodos() are defined above in Firebase section
 
-function addTodo() {
+async function addTodo() {
   const title = document.getElementById('todo-title').value.trim();
   if (!title) return;
   const priority = document.getElementById('todo-priority').value;
   const type     = document.getElementById('todo-type').value;
   const category = document.getElementById('todo-category').value.trim();
   const due      = document.getElementById('todo-due').value;
-  const todos = getTodos();
-  todos.unshift({
+  const todo = {
     id: Date.now(),
     title, priority, type, category, due,
     done: false,
     subtasks: [],
     dateAdded: dateKey(currentDate)
-  });
-  saveTodos(todos);
+  };
+  showSync('saving…', '#e8b83a');
+  try {
+    await addDoc(collection(db, "users", USER, "todos"), todo);
+    _todosCache = null; // invalidate
+    showSync('✓ saved');
+  } catch(e) { showSync('⚠ failed', '#e8623a'); return; }
   ['todo-title','todo-category','todo-due'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('todo-priority').value = 'medium';
   document.getElementById('todo-type').value = 'daily';
   renderTodos();
 }
 
-function toggleTodo(id) {
-  const todos = getTodos();
+async function _todoUpdate(id, updater) {
+  // Helper: get, mutate, save one todo doc
+  const todos = await getTodos();
   const t = todos.find(t => t.id === id);
-  if (t) t.done = !t.done;
-  saveTodos(todos);
+  if (!t) return;
+  updater(t);
+  if (t.firestoreId) {
+    const { firestoreId, ...data } = t;
+    showSync('saving…', '#e8b83a');
+    try {
+      await updateDoc(doc(db, "users", USER, "todos", firestoreId), data);
+      _todosCache = null;
+      showSync('✓ saved');
+    } catch(e) { showSync('⚠ failed', '#e8623a'); }
+  }
   renderTodos();
 }
 
-function deleteTodo(id) {
-  saveTodos(getTodos().filter(t => t.id !== id));
-  renderTodos();
+async function toggleTodo(id) {
+  await _todoUpdate(id, t => t.done = !t.done);
 }
 
-function moveTodo(id, newType) {
-  const todos = getTodos();
+async function deleteTodo(id) {
+  const todos = await getTodos();
   const t = todos.find(t => t.id === id);
-  if (t) t.type = newType;
-  saveTodos(todos);
+  if (t && t.firestoreId) {
+    showSync('saving…', '#e8b83a');
+    try {
+      await deleteDoc(doc(db, "users", USER, "todos", t.firestoreId));
+      _todosCache = null;
+      showSync('✓ deleted');
+    } catch(e) { showSync('⚠ failed', '#e8623a'); return; }
+  }
   renderTodos();
 }
 
-function addSubtask(todoId) {
+async function moveTodo(id, newType) {
+  await _todoUpdate(id, t => t.type = newType);
+}
+
+async function addSubtask(todoId) {
   const input = document.getElementById('sub-input-' + todoId);
   const text = input ? input.value.trim() : '';
   if (!text) return;
-  const todos = getTodos();
-  const t = todos.find(t => t.id === todoId);
-  if (t) { if (!t.subtasks) t.subtasks = []; t.subtasks.push({ id: Date.now(), text, done: false }); }
-  saveTodos(todos);
-  renderTodos();
+  await _todoUpdate(todoId, t => {
+    if (!t.subtasks) t.subtasks = [];
+    t.subtasks.push({ id: Date.now(), text, done: false });
+  });
 }
 
-function toggleSubtask(todoId, subId) {
-  const todos = getTodos();
-  const t = todos.find(t => t.id === todoId);
-  if (t && t.subtasks) { const s = t.subtasks.find(s => s.id === subId); if (s) s.done = !s.done; }
-  saveTodos(todos);
-  renderTodos();
+async function toggleSubtask(todoId, subId) {
+  await _todoUpdate(todoId, t => {
+    if (t.subtasks) { const s = t.subtasks.find(s => s.id === subId); if (s) s.done = !s.done; }
+  });
 }
 
-function deleteSubtask(todoId, subId) {
-  const todos = getTodos();
-  const t = todos.find(t => t.id === todoId);
-  if (t) t.subtasks = (t.subtasks||[]).filter(s => s.id !== subId);
-  saveTodos(todos);
-  renderTodos();
+async function deleteSubtask(todoId, subId) {
+  await _todoUpdate(todoId, t => {
+    t.subtasks = (t.subtasks||[]).filter(s => s.id !== subId);
+  });
 }
 
 function setFilter(list, val, btn) {
@@ -2550,8 +2815,8 @@ function buildTodoItem(t) {
     </div>`;
 }
 
-function renderTodos() {
-  const todos = getTodos();
+async function renderTodos() {
+  const todos = await getTodos();
   const todayKey = dateKey(currentDate);
 
   // Daily = added today OR type daily and not backlog
@@ -2598,12 +2863,7 @@ function renderTodos() {
 let rbIngredients = [];
 let rbSteps = [];
 
-function getRbRecipes() {
-  try { return JSON.parse(localStorage.getItem('rbRecipes') || '[]'); } catch { return []; }
-}
-function saveRbRecipes(r) {
-  try { localStorage.setItem('rbRecipes', JSON.stringify(r)); } catch {}
-}
+// getRbRecipes() and saveRbRecipesToFS() are defined above in Firebase section
 
 function openRecipeBookForm(id) {
   if (id) editRbRecipe(id); else clearRbForm();
@@ -2664,7 +2924,7 @@ function renderRbStepsList() {
     </div>`).join('');
 }
 
-function saveRbRecipe() {
+async function saveRbRecipe() {
   const name = document.getElementById('rb-name').value.trim();
   if (!name) { alert('Please enter a recipe name'); return; }
   const editId = document.getElementById('rb-edit-id').value;
@@ -2688,14 +2948,26 @@ function saveRbRecipe() {
     steps:       [...rbSteps],
     createdAt: new Date().toISOString()
   };
-  const recipes = getRbRecipes();
-  if (editId) {
-    const idx = recipes.findIndex(r => r.id === parseInt(editId));
-    if (idx > -1) recipes[idx] = recipe; else recipes.unshift(recipe);
-  } else {
-    recipes.unshift(recipe);
+  showSync('saving…', '#e8b83a');
+  try {
+    if (editId) {
+      const existing = (await getRbRecipes()).find(r => r.id === parseInt(editId));
+      if (existing && existing.firestoreId) {
+        const { firestoreId, ...data } = recipe;
+        await updateDoc(doc(db, "users", USER, "rbRecipes", existing.firestoreId), data);
+      } else {
+        await addDoc(collection(db, "users", USER, "rbRecipes"), recipe);
+      }
+    } else {
+      await addDoc(collection(db, "users", USER, "rbRecipes"), recipe);
+    }
+    _rbRecipesCache = null;
+    showSync('✓ saved');
+  } catch(e) {
+    console.error('saveRbRecipe error', e);
+    showSync('⚠ save failed', '#e8623a');
+    return;
   }
-  saveRbRecipes(recipes);
   clearRbForm();
   document.getElementById('rb-modal-overlay').classList.remove('open');
   renderRecipeBook();
@@ -2713,8 +2985,8 @@ function clearRbForm() {
   renderRbIngList(); renderRbStepsList();
 }
 
-function editRbRecipe(id) {
-  const r = getRbRecipes().find(r => r.id === id); if (!r) return;
+async function editRbRecipe(id) {
+  const r = (await getRbRecipes()).find(r => r.id === id); if (!r) return;
   document.getElementById('rb-edit-id').value  = r.id;
   document.getElementById('rb-name').value     = r.name;
   document.getElementById('rb-category').value = r.category  || '';
@@ -2736,14 +3008,22 @@ function editRbRecipe(id) {
   renderRbIngList(); renderRbStepsList();
 }
 
-function deleteRbRecipe(id) {
+async function deleteRbRecipe(id) {
   if (!confirm('Delete this recipe?')) return;
-  saveRbRecipes(getRbRecipes().filter(r => r.id !== id));
+  const r = (await getRbRecipes()).find(r => r.id === id);
+  if (r && r.firestoreId) {
+    showSync('saving…', '#e8b83a');
+    try {
+      await deleteDoc(doc(db, "users", USER, "rbRecipes", r.firestoreId));
+      _rbRecipesCache = null;
+      showSync('✓ deleted');
+    } catch(e) { showSync('⚠ failed', '#e8623a'); return; }
+  }
   renderRecipeBook();
 }
 
-function viewRbRecipe(id) {
-  const r = getRbRecipes().find(r => r.id === id); if (!r) return;
+async function viewRbRecipe(id) {
+  const r = (await getRbRecipes()).find(r => r.id === id); if (!r) return;
   const totalTime = (r.preptime||0) + (r.cooktime||0);
   const nutCells = [
     ['Calories', r.cal, 'kcal'],
@@ -2802,11 +3082,11 @@ function viewRbRecipe(id) {
   document.getElementById('rb-detail-overlay').classList.add('open');
 }
 
-function renderRecipeBook() {
+async function renderRecipeBook() {
   const el = document.getElementById('rb-list'); if (!el) return;
   const q   = (document.getElementById('rb-search')||{}).value || '';
   const cat = (document.getElementById('rb-filter-cat')||{}).value || '';
-  let recipes = getRbRecipes();
+  let recipes = await getRbRecipes();
 
   // Populate category filter
   const catEl = document.getElementById('rb-filter-cat');
@@ -2852,7 +3132,8 @@ function renderRecipeBook() {
     </div>`).join('') + '</div>';
 }
 
-function renderAll() {
+// ─── INIT ─────────────────────────────────────────────────────
+async function renderAll() {
   renderDashboard();
   renderFood();
   renderExpenses();
@@ -2867,9 +3148,32 @@ function renderAll() {
   renderRecipeBook();
 }
 
-// ─── INIT ─────────────────────────────────────────────────────
 updateDateDisplay();
 renderAll();
+
+// ─── EXPOSE TO GLOBAL SCOPE (required for inline onclick handlers with type="module") ──
+Object.assign(window, {
+  googleSignIn, googleSignOut,
+  changeDay, switchTab, switchFoodTab,
+  addFood, deleteFood,
+  addExpense, deleteExpense,
+  addSport, deleteSport,
+  saveSleep,
+  addHabit, toggleHabit,
+  saveNotes,
+  saveToLibrary, deleteFoodFromLibrary, fillFromLibrary, filterLibrary,
+  addIngredient, removeIngredient, addStep, removeStep,
+  saveRecipe, clearRecipeForm, editRecipe, deleteRecipe, logRecipeAsFood,
+  setMealView, setMealCat, openMealForm, closeMealForm, toggleRecipeDetail,
+  togglePlanSelect, addPlanMeal, removePlanMeal,
+  addRbIng, removeRbIng, addRbStep, removeRbStep,
+  saveRbRecipe, clearRbForm, editRbRecipe, deleteRbRecipe, viewRbRecipe,
+  openRecipeBookForm, closeRecipeBookForm, closeRbDetail,
+  addTodo, toggleTodo, deleteTodo, moveTodo,
+  addSubtask, toggleSubtask, deleteSubtask, setFilter,
+  renderRecipeList, renderRecipeBook, renderAll
+});
 </script>
+</div><!-- /app-wrapper -->
 </body>
 </html>
